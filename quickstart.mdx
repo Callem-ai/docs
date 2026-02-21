@@ -1,80 +1,91 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Get your first AI voice agent up and running in 5 minutes."
 ---
 
-## Get started in three steps
+# Quickstart
 
-Get your documentation site running locally and make your first customization.
+Follow these steps to create, configure, and test your first AI voice agent on Callem Studio.
 
-### Step 1: Set up your local environment
+## Prerequisites
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+- A Callem Studio account — [sign up](https://studio.callem.ai) or ask your team admin for an invite
+- A project created in the dashboard
 
-### Step 2: Deploy your changes
+---
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+## Step 1: Create an Agent
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+<Steps>
+  <Step title="Navigate to Agents">
+    Open the **Build > Agents** section from the sidebar.
+  </Step>
+  <Step title="Create a new agent">
+    Click **New Agent** and give it a name (e.g. "Reception Assistant").
+  </Step>
+  <Step title="Configure the basics">
+    - **System prompt**: describe your agent's role, personality, and instructions
+    - **Voice**: pick a TTS voice from the available providers (ElevenLabs, Azure, etc.)
+    - **Language**: select the primary language for your agent
+    - **LLM model**: choose the underlying language model
+  </Step>
+</Steps>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## Step 2: Add Knowledge
 
-### Step 3: Go live
+<Steps>
+  <Step title="Navigate to Knowledge Base">
+    Open **Build > Knowledge Base** from the sidebar.
+  </Step>
+  <Step title="Create a knowledge item">
+    Click **Add** and paste or upload the content your agent should know — FAQs, product descriptions, policies, etc.
+  </Step>
+  <Step title="Link to your agent">
+    In your agent's configuration, select the knowledge base to attach.
+  </Step>
+</Steps>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+## Step 3: Assign a Phone Number
 
-## Next steps
+<Steps>
+  <Step title="Navigate to Channels">
+    Open **Deploy > Channels** from the sidebar.
+  </Step>
+  <Step title="Configure a number">
+    Select an available phone number (or import your own via SIP) and assign your agent to it.
+  </Step>
+</Steps>
 
-Now that you have your docs running, explore these key features:
+## Step 4: Make a Test Call
+
+Call the assigned phone number from your own phone. Your AI agent will answer and respond based on the prompt and knowledge base you configured.
+
+## Step 5: Review the Call
+
+<Steps>
+  <Step title="Navigate to Calls">
+    Open **Monitor > Calls** from the sidebar.
+  </Step>
+  <Step title="Inspect the call">
+    Find your test call in the list. Click on it to see the full transcript, listen to the recording, and review the call analysis.
+  </Step>
+</Steps>
+
+---
+
+## Next Steps
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Add Tools" icon="wrench" href="/build/tools">
+    Let your agent call external APIs during conversations.
+  </Card>
+  <Card title="Build a Workflow" icon="diagram-project" href="/build/workflows">
+    Create multi-step conversation flows with branching logic.
+  </Card>
+  <Card title="Launch a Campaign" icon="megaphone" href="/deploy/campaign">
+    Automate outbound calls to a list of contacts.
+  </Card>
+  <Card title="Set Up Alerts" icon="bell" href="/monitor/alerting">
+    Get notified when call metrics cross thresholds.
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

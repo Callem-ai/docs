@@ -1,33 +1,72 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Reference"
+description: "Programmatic access to Callem Studio data via a secure REST API."
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+# API Reference
 
-## Welcome
+The Callem Studio Public API provides programmatic access to your call data and knowledge base content. Use it to integrate Callem Studio with your CRM, data warehouse, or any external system.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+## Base URL
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+https://api.callem.ai/v1
+```
 
-## Authentication
+## Available Resources
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+| Resource | Endpoints | Description |
+|----------|-----------|-------------|
+| **Calls** | `GET`, `GET :id`, `DELETE :id` | List, retrieve, and delete call records |
+| **Knowledge** | `GET`, `GET :id`, `POST`, `DELETE :id` | List, retrieve, create, and delete knowledge base items |
+
+## Response Format
+
+All responses are returned as JSON. List endpoints include pagination metadata:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "data": [...],
+  "pagination": {
+    "total": 142,
+    "limit": 100,
+    "offset": 0
   }
-]
+}
 ```
+
+## Error Handling
+
+The API uses standard HTTP status codes:
+
+| Code | Description |
+|------|-------------|
+| `200` | Success |
+| `201` | Created |
+| `400` | Bad request — check your parameters |
+| `401` | Unauthorized — invalid or missing API key |
+| `403` | Forbidden — IP not allowed or resource access denied |
+| `404` | Not found — resource doesn't exist or belongs to another project |
+| `429` | Rate limited — too many requests |
+| `500` | Internal server error |
+
+Error responses include a message:
+
+```json
+{
+  "statusCode": 401,
+  "message": "Invalid API key"
+}
+```
+
+## Rate Limiting
+
+The API is rate-limited to **120 requests per minute** per IP address. If you exceed this limit, you'll receive a `429 Too Many Requests` response.
+
+## Data Scoping
+
+Each API key is bound to a single project. All API calls are automatically scoped to that project's data — you cannot access data from other projects.
+
+<Info>
+  The Public API is **read-only for calls** (list, get, delete) and **read-write for knowledge** (list, get, create, delete). Agent configuration, campaigns, and other management operations are only available through the dashboard.
+</Info>

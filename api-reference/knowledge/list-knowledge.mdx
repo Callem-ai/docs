@@ -1,0 +1,52 @@
+---
+title: "List Knowledge"
+description: "Retrieve all knowledge base items for your project."
+---
+
+# List Knowledge
+
+Retrieve all knowledge base items belonging to the authenticated project.
+
+## Endpoint
+
+```
+GET /v1/knowledge
+```
+
+## Request
+
+```bash
+curl -X GET "https://api.callem.ai/v1/knowledge" \
+  -H "Authorization: Bearer ck_live_your_api_key_here"
+```
+
+## Response
+
+```json
+[
+  {
+    "id": "abc123def456789012345678",
+    "name": "Product FAQ",
+    "description": "Frequently asked questions about our products",
+    "text": "## Pricing\nOur standard plan costs €49/month...\n\n## Return Policy\nItems can be returned within 30 days...",
+    "createdAt": "2025-11-20T10:15:00.000Z"
+  },
+  {
+    "id": "def456abc789012345678901",
+    "name": "Business Hours",
+    "description": "Opening hours and locations",
+    "text": "## Main Office\nMonday to Friday, 9am to 6pm...",
+    "createdAt": "2025-11-18T08:00:00.000Z"
+  }
+]
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique identifier |
+| `name` | string | Name of the knowledge item |
+| `description` | string | Description/summary |
+| `text` | string | Full text content |
+| `createdAt` | string | ISO 8601 creation timestamp |

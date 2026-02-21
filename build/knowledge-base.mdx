@@ -1,0 +1,73 @@
+---
+title: "Knowledge Base"
+description: "Feed your agents structured content for accurate, context-aware responses."
+---
+
+# Knowledge Base
+
+The Knowledge Base allows you to provide your agents with domain-specific information. During a conversation, the agent automatically retrieves the most relevant content to answer caller questions accurately.
+
+## How It Works
+
+1. You create knowledge items containing text content
+2. The content is split into chunks and embedded as vectors
+3. During a call, the agent's question is matched against these vectors
+4. The most relevant chunks are injected into the LLM context
+
+This is called **Retrieval-Augmented Generation (RAG)** — it ensures your agent answers based on your data, not just general knowledge.
+
+## Creating a Knowledge Item
+
+1. Navigate to **Build > Knowledge Base**
+2. Click **Add**
+3. Fill in:
+   - **Name**: a descriptive label (e.g. "Product Catalog Q3 2025")
+   - **Description**: optional summary of the content
+   - **Content**: the text your agent should know
+
+<Tip>
+  Structure your content with headings (`## Section Title`) to help the chunking algorithm split it into meaningful sections.
+</Tip>
+
+## Content Guidelines
+
+<AccordionGroup>
+  <Accordion title="Use clear, factual language">
+    Write content as you'd want the agent to say it. Avoid internal jargon unless the agent should use it with callers.
+  </Accordion>
+  <Accordion title="Organize with headings">
+    Use `## Heading` to separate topics. Each heading creates a natural chunk boundary, improving retrieval accuracy.
+  </Accordion>
+  <Accordion title="Keep items focused">
+    One knowledge item per topic or document. Don't dump everything into a single item — smaller, focused items retrieve better.
+  </Accordion>
+  <Accordion title="Update regularly">
+    Outdated knowledge leads to wrong answers. Delete and recreate items when the underlying information changes.
+  </Accordion>
+</AccordionGroup>
+
+## Example Content Structure
+
+```markdown
+## Business Hours
+We are open Monday to Friday, 9am to 6pm.
+Saturday from 10am to 2pm. Closed on Sundays and public holidays.
+
+## Return Policy
+Items can be returned within 30 days of purchase with original receipt.
+Refunds are processed within 5-7 business days.
+Sale items are final sale and cannot be returned.
+
+## Pricing
+- Standard plan: €49/month
+- Professional plan: €99/month
+- Enterprise: contact sales for custom pricing
+```
+
+## Linking to an Agent
+
+Once created, attach the knowledge base to your agent in the agent configuration page. The agent will automatically use it during conversations.
+
+## API Access
+
+Knowledge base items can also be managed programmatically via the [Public API](/api-reference/knowledge/list-knowledge).

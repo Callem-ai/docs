@@ -1,0 +1,114 @@
+---
+title: "Agents"
+description: "Create and configure AI voice agents with custom prompts, voices, and behaviors."
+---
+
+# Agents
+
+Agents are the core building block of Callem Studio. An agent is an AI-powered voice assistant configured with a system prompt, a voice, a language model, and optional integrations like knowledge bases and tools.
+
+## Creating an Agent
+
+1. Navigate to **Build > Agents** in the sidebar
+2. Click **New Agent**
+3. Give your agent a descriptive name
+
+## Agent Configuration
+
+Each agent is defined by an **Agent Configuration** that controls its behavior:
+
+### System Prompt
+
+The system prompt is the most important part of your agent. It defines the agent's personality, role, instructions, and boundaries.
+
+<Tip>
+  Write your system prompt as if you were briefing a real employee. Be specific about what the agent should do, how it should respond, and what it should avoid.
+</Tip>
+
+```text Example System Prompt
+You are Sophie, a friendly receptionist at Acme Dental Clinic.
+Your role is to answer incoming calls, schedule appointments, 
+and answer questions about our services.
+
+Rules:
+- Always greet the caller warmly
+- Ask for their name and reason for calling
+- If they want an appointment, check availability
+- Never provide medical advice
+- If unsure, offer to transfer to the office manager
+```
+
+### Voice (TTS)
+
+Choose a text-to-speech voice from supported providers:
+
+| Provider | Voices | Highlights |
+|----------|--------|------------|
+| **ElevenLabs** | 100+ | Natural-sounding, multilingual, custom cloning |
+| **Azure** | 400+ | Wide language coverage, low latency |
+
+You can configure additional TTS settings like model selection depending on the provider.
+
+### Speech-to-Text (STT)
+
+Select the transcription engine for understanding caller speech:
+
+- **Deepgram** — fast, accurate, supports multiple languages
+- **Azure Speech** — enterprise-grade, wide language support
+
+### Language Model (LLM)
+
+Pick the underlying AI model that powers your agent's reasoning:
+
+- GPT-4o, GPT-4o-mini
+- Claude 3.5 Sonnet
+- Gemini
+- And more, depending on your configuration
+
+### Language
+
+Set the primary language for your agent. This affects STT transcription, TTS output, and prompt behavior.
+
+### Background Sound
+
+Add ambient background audio to make calls feel more natural (e.g. call center ambiance). You can:
+
+- Enable/disable the background sound
+- Choose from a library of pre-configured sounds
+- Adjust the volume level
+
+### Knowledge Base
+
+Attach one or more knowledge bases to give your agent access to domain-specific information. The agent will automatically retrieve relevant content during conversations.
+
+### Tools
+
+Assign tools (custom functions) that your agent can invoke during a call — like booking appointments, checking order status, or transferring the call.
+
+## Agent Settings Summary
+
+| Setting | Description |
+|---------|-------------|
+| Name | Display name for the agent |
+| System Prompt | Instructions that define agent behavior |
+| Voice | TTS voice provider and voice selection |
+| STT | Speech-to-text engine |
+| LLM | Language model powering responses |
+| Language | Primary conversation language |
+| Background Sound | Ambient audio during calls |
+| Knowledge Base | Attached knowledge sources |
+| Tools | Functions the agent can call |
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Write specific, actionable prompts">
+    Vague prompts like "be helpful" lead to inconsistent behavior. Instead, describe exact scenarios: "When a caller asks about pricing, quote from the attached knowledge base."
+  </Accordion>
+  <Accordion title="Test with real conversations">
+    After configuring your agent, call the assigned phone number yourself. Listen for unnatural pauses, incorrect responses, or missed instructions.
+  </Accordion>
+  <Accordion title="Start simple, iterate">
+    Begin with a minimal prompt and a single knowledge base. Add tools and complexity once the basic flow works well.
+  </Accordion>
+</AccordionGroup>

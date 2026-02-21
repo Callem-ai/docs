@@ -1,0 +1,83 @@
+---
+title: "Tools"
+description: "Define custom functions and API integrations your agents can invoke during calls."
+---
+
+# Tools
+
+Tools extend your agent's capabilities beyond conversation. They allow the agent to perform real actions during a call — like booking appointments, looking up customer records, or triggering webhooks.
+
+## How Tools Work
+
+1. You define a tool with a name, description, and expected parameters
+2. The tool is attached to an agent
+3. During a call, the LLM decides when to invoke a tool based on the conversation context
+4. The tool executes (API call, webhook, etc.) and the result is fed back to the agent
+5. The agent uses the result to continue the conversation
+
+This is also known as **function calling** — a capability of modern LLMs.
+
+## Creating a Tool
+
+1. Navigate to **Build > Tools**
+2. Click **New Tool**
+3. Configure:
+   - **Name**: a clear function name (e.g. `check_availability`)
+   - **Description**: explain what this tool does — the LLM reads this to decide when to use it
+   - **Parameters**: define the inputs the tool expects (JSON Schema format)
+   - **Endpoint**: the URL to call when the tool is invoked
+
+## Tool Configuration
+
+| Field | Description |
+|-------|-------------|
+| Name | Function name the LLM will reference |
+| Description | When and why to use this tool (crucial for accuracy) |
+| Parameters | JSON Schema defining expected inputs |
+| Endpoint URL | HTTP endpoint called with the parameters |
+| Method | HTTP method (GET, POST, etc.) |
+| Headers | Custom headers (e.g. API keys) |
+
+## Example: Appointment Booking Tool
+
+```json
+{
+  "name": "book_appointment",
+  "description": "Book an appointment for the caller. Use when the caller explicitly requests to schedule a visit.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "caller_name": {
+        "type": "string",
+        "description": "Full name of the caller"
+      },
+      "date": {
+        "type": "string",
+        "description": "Requested date in YYYY-MM-DD format"
+      },
+      "time": {
+        "type": "string",
+        "description": "Requested time in HH:MM format"
+      }
+    },
+    "required": ["caller_name", "date", "time"]
+  }
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Write precise descriptions">
+    The LLM uses the tool description to decide when to call it. A vague description leads to incorrect or missed invocations. Be specific about trigger conditions.
+  </Accordion>
+  <Accordion title="Handle errors gracefully">
+    Your API endpoint should return clear error messages. The agent will relay these to the caller, so make them human-readable.
+  </Accordion>
+  <Accordion title="Keep tools focused">
+    One tool = one action. Don't create a "do everything" tool. Split complex workflows into multiple tools with clear responsibilities.
+  </Accordion>
+  <Accordion title="Test with real scenarios">
+    Call your agent and try to trigger each tool. Verify the parameters are passed correctly and the response is used appropriately.
+  </Accordion>
+</AccordionGroup>

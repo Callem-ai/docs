@@ -1,0 +1,68 @@
+---
+title: "Calls"
+description: "Browse call history with transcripts, recordings, call analysis, and engagement data."
+---
+
+# Calls
+
+The Calls section is your central hub for reviewing every conversation your agents have handled. Browse call history, read transcripts, listen to recordings, and inspect call analysis data.
+
+## Call List
+
+Navigate to **Monitor > Calls** to see a paginated list of all calls. Each row shows:
+
+| Column | Description |
+|--------|-------------|
+| **Caller** | Phone number of the caller |
+| **Agent** | Which agent handled the call |
+| **Duration** | Length of the call |
+| **Status** | `completed` or `live` |
+| **Engaged** | Whether the call was a meaningful conversation (vs. voicemail, hang-up) |
+| **Date** | When the call occurred |
+
+### Filtering
+
+Use the filter bar to narrow results by:
+
+- **Date range** — find calls from a specific period
+- **Agent** — filter by one or more agents
+- **Duration** — minimum/maximum call length
+- **Call analysis fields** — filter by custom analysis values (e.g. sentiment, lead quality)
+
+## Call Detail
+
+Click on any call to see the full detail view:
+
+### Transcript
+
+The complete conversation transcript, showing each message with its role:
+- **User** — what the caller said
+- **Assistant** — what the agent said
+
+### Recording
+
+Listen to the full audio recording of the call directly in the browser.
+
+### Call Analysis
+
+If call analysis is configured for the agent, you'll see extracted data like:
+
+- **Summary** — AI-generated summary of the conversation
+- **Evaluation** — success/failure assessment
+- **Custom fields** — any fields you've defined (e.g. `sentiment`, `leadQuality`, `appointmentBooked`)
+
+### Metadata
+
+Additional call metadata:
+
+- **Ended reason** — why the call ended (user hang-up, agent hang-up, transfer, error)
+- **Caller/Called numbers** — full phone numbers
+- **Total interactions** — number of back-and-forth exchanges
+
+## Live Calls
+
+Calls currently in progress appear with a `live` badge. The live call counter in the header shows how many calls are active across all agents.
+
+## API Access
+
+Call data is also available through the [Public API](/api-reference/calls/list-calls) for integration with external systems.

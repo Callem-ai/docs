@@ -1,0 +1,57 @@
+---
+title: "Create Knowledge"
+description: "Create a new knowledge base item."
+---
+
+# Create Knowledge
+
+Add a new knowledge base item to your project. The content will be automatically chunked, embedded, and made available for agent retrieval.
+
+## Endpoint
+
+```
+POST /v1/knowledge
+```
+
+## Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Name of the knowledge item |
+| `description` | string | No | Description or summary |
+| `text` | string | Yes | Full text content |
+
+## Request
+
+```bash
+curl -X POST "https://api.callem.ai/v1/knowledge" \
+  -H "Authorization: Bearer ck_live_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Return Policy 2025",
+    "description": "Updated return policy effective January 2025",
+    "text": "## Return Policy\nItems can be returned within 30 days of purchase with original receipt.\n\n## Exceptions\nSale items are final sale and cannot be returned.\n\n## Process\nBring the item to any store location or ship it to our returns center."
+  }'
+```
+
+## Response
+
+```json
+{
+  "id": "new123item456789012345678",
+  "name": "Return Policy 2025",
+  "description": "Updated return policy effective January 2025",
+  "text": "## Return Policy\nItems can be returned within 30 days...",
+  "createdAt": "2025-12-15T16:00:00.000Z"
+}
+```
+
+<Tip>
+  Structure your text content with `## Headings` to improve chunking quality. Each heading acts as a natural boundary for the vector embedding process.
+</Tip>
+
+## Errors
+
+| Code | Description |
+|------|-------------|
+| `400` | Missing required fields (`name` or `text`) |

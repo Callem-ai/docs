@@ -1,0 +1,61 @@
+---
+title: "Channels"
+description: "Connect your agents to phone numbers and configure telephony routing."
+---
+
+# Channels
+
+Channels are the bridge between your AI agents and the real world. Configure phone numbers, SIP trunks, and routing rules to handle inbound and outbound calls.
+
+## Overview
+
+Each channel represents a phone number or SIP endpoint linked to an agent. When a call arrives on that number, the assigned agent picks up and begins the conversation.
+
+## Phone Number Configuration
+
+### Assigning an Agent
+
+1. Navigate to **Deploy > Channels**
+2. Select a phone number from the list
+3. Choose the agent that should handle calls on this number
+4. Save the configuration
+
+### Supported Features
+
+| Feature | Description |
+|---------|-------------|
+| **Inbound calls** | Receive calls — the assigned agent answers automatically |
+| **Outbound calls** | Place calls using this number as the caller ID |
+| **SIP trunking** | Connect your existing telephony infrastructure via SIP |
+| **Number import** | Bring your own phone number from another provider |
+
+## SIP Configuration
+
+For enterprises with existing telephony setups, Callem Studio supports SIP trunk integration:
+
+- **SIP URI**: your Callem SIP endpoint for routing
+- **Authentication**: credentials or IP-based allowlisting
+- **Codec support**: G.711 (PCMU/PCMA), Opus
+
+<Info>
+  Contact support at **contact@callem.ai** for assistance with custom SIP configurations.
+</Info>
+
+## Multi-Number Setup
+
+You can assign the same agent to multiple numbers, or different agents to different numbers. This allows scenarios like:
+
+- **Language routing**: French number → French agent, English number → English agent
+- **Department routing**: Sales number → Sales agent, Support number → Support agent
+- **Geographic routing**: different numbers for different regions, all handled by specialized agents
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Test before going live">
+    Always call your configured number from a personal phone to verify the agent responds correctly before publishing the number publicly.
+  </Accordion>
+  <Accordion title="Monitor call quality">
+    After deployment, check the **Monitor > Calls** section regularly for dropped calls, poor transcription, or unexpected agent behavior.
+  </Accordion>
+</AccordionGroup>

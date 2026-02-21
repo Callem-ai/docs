@@ -1,0 +1,45 @@
+---
+title: "Get Knowledge"
+description: "Retrieve a specific knowledge base item."
+---
+
+# Get Knowledge
+
+Retrieve the full details of a single knowledge base item by its ID.
+
+## Endpoint
+
+```
+GET /v1/knowledge/:id
+```
+
+## Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | The knowledge item ID |
+
+## Request
+
+```bash
+curl -X GET "https://api.callem.ai/v1/knowledge/abc123def456789012345678" \
+  -H "Authorization: Bearer ck_live_your_api_key_here"
+```
+
+## Response
+
+```json
+{
+  "id": "abc123def456789012345678",
+  "name": "Product FAQ",
+  "description": "Frequently asked questions about our products",
+  "text": "## Pricing\nOur standard plan costs €49/month...",
+  "createdAt": "2025-11-20T10:15:00.000Z"
+}
+```
+
+## Errors
+
+| Code | Description |
+|------|-------------|
+| `404` | Knowledge item not found, or belongs to a different project |

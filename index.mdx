@@ -1,97 +1,82 @@
 ---
 title: "Introduction"
-description: "Welcome to the new home for your documentation"
+description: "Build, deploy, and monitor AI voice agents at scale."
 ---
 
-## Setting up
+# Welcome to Callem Studio
 
-Get your documentation site up and running in minutes.
+Callem Studio is a comprehensive platform for building, deploying, and monitoring **AI-powered voice agents**. Design conversational workflows, connect agents to phone channels, launch outbound campaigns, and track performance — all from a single interface.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+## Platform Overview
 
-## Make it yours
+Callem Studio is organized around three core pillars that mirror the lifecycle of a voice AI project:
 
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={3}>
+  <Card title="Build" icon="hammer" color="#3B82F6">
+    Design agents, manage knowledge bases, configure tools, and create advanced conversation workflows.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Deploy" icon="rocket" color="#F97316">
+    Connect agents to phone numbers, configure SIP channels, and launch outbound calling campaigns.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Monitor" icon="chart-line" color="#10B981">
+    Review call recordings, analyze performance metrics, and set up real-time alerting rules.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+---
 
-Everything you need to create world-class documentation.
+## Build
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+Create intelligent voice agents with full control over conversation logic, knowledge, and integrations.
 
-## Need inspiration?
+<CardGroup cols={2}>
+  <Card title="Agents" icon="robot" href="/build/agents">
+    Configure voice agents with LLM prompts, TTS voices, STT engines, and advanced settings like background sounds.
+  </Card>
+  <Card title="Knowledge Base" icon="book" href="/build/knowledge-base">
+    Feed your agents structured content — text, documents, or URLs — for accurate, context-aware responses.
+  </Card>
+  <Card title="Tools" icon="wrench" href="/build/tools">
+    Define custom functions and API integrations your agents can call during conversations.
+  </Card>
+  <Card title="Workflows" icon="diagram-project" href="/build/workflows">
+    Design multi-step conversation flows with a visual node editor for complex call scenarios.
+  </Card>
+</CardGroup>
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
+## Deploy
+
+Bring your agents to production with telephony channels and automated outbound campaigns.
+
+<CardGroup cols={2}>
+  <Card title="Channels" icon="phone" href="/deploy/channels">
+    Assign phone numbers to agents, configure SIP trunking, and manage inbound/outbound routing.
+  </Card>
+  <Card title="Campaign" icon="megaphone" href="/deploy/campaign">
+    Launch outbound calling campaigns with contact lists, scheduling, retry logic, and real-time progress tracking.
+  </Card>
+</CardGroup>
+
+## Monitor
+
+Track every call, measure KPIs, and stay on top of anomalies with real-time alerts.
+
+<CardGroup cols={2}>
+  <Card title="Calls & Transcripts" icon="phone-arrow-down-left" href="/monitor/calls">
+    Browse call history with full transcripts, recordings, call analysis, and engagement status.
+  </Card>
+  <Card title="Analytics" icon="chart-mixed" href="/monitor/analytics">
+    Visualize call volumes, durations, success rates, and custom metrics with interactive dashboards.
+  </Card>
+  <Card title="Alerting" icon="bell" href="/monitor/alerting">
+    Define threshold-based alerts on any metric, schedule evaluation windows, and receive email notifications.
+  </Card>
+</CardGroup>
+
+## API Access
+
+Integrate Callem Studio data into your own systems with a secure REST API.
+
+<Card title="API Reference" icon="code" href="/api-reference/introduction">
+  Generate API keys, authenticate with Bearer tokens, and programmatically access calls and knowledge base data.
 </Card>

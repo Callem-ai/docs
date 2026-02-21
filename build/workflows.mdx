@@ -1,0 +1,79 @@
+---
+title: "Workflows"
+description: "Design multi-step conversation flows with a visual node editor."
+---
+
+# Workflows
+
+Workflows let you design structured, multi-step conversation flows using a visual node editor. Unlike single-prompt agents, workflows give you fine-grained control over the conversation path — including branching, conditions, and step-by-step data collection.
+
+## When to Use Workflows
+
+Use workflows when you need:
+
+- **Structured conversations** with a defined sequence of questions
+- **Branching logic** based on caller responses
+- **Multi-step processes** like qualification surveys or intake forms
+- **Complex routing** with conditional transfers or escalation paths
+
+For simple Q&A or open-ended conversations, a single-prompt agent with a knowledge base is usually sufficient.
+
+## Workflow Editor
+
+The visual editor lets you build workflows by connecting **nodes** on a canvas:
+
+### Node Types
+
+| Node | Description |
+|------|-------------|
+| **Start** | Entry point — configure initial greeting, language, and background sound |
+| **Conversation** | A step where the agent speaks and/or listens — define prompts and expected responses |
+| **Condition** | Branch the flow based on caller input or collected data |
+| **Transfer** | Transfer the call to a human agent or another number |
+| **End** | Terminate the call with an optional closing message |
+
+### Start Node Properties
+
+The Start node configures the initial behavior of the call:
+
+- **Welcome message**: first thing the agent says
+- **Language**: primary language for the call
+- **Background sound**: optional ambient audio with volume control
+
+### Connections
+
+Nodes are connected by **edges** that define the flow. Each edge can have conditions that determine which path the conversation takes.
+
+## Building a Workflow
+
+<Steps>
+  <Step title="Create a new workflow">
+    Navigate to **Build > Agents**, select an agent, and switch to the **Workflow** tab.
+  </Step>
+  <Step title="Configure the Start node">
+    Set the welcome message, language, and any initial parameters.
+  </Step>
+  <Step title="Add conversation steps">
+    Drag Conversation nodes onto the canvas. Define what the agent should say and what information to collect at each step.
+  </Step>
+  <Step title="Add branching logic">
+    Use Condition nodes to route the call based on collected data (e.g. "If caller is interested, go to Step 3; otherwise, go to End").
+  </Step>
+  <Step title="Connect and save">
+    Draw edges between nodes to define the flow. Click **Save** to persist the workflow.
+  </Step>
+</Steps>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep workflows linear when possible">
+    Complex branching is powerful but harder to debug. Start with a linear flow and add branches only where needed.
+  </Accordion>
+  <Accordion title="Test every path">
+    Make test calls that exercise each branch. Untested paths are where bugs hide.
+  </Accordion>
+  <Accordion title="Use clear node names">
+    Name your nodes descriptively (e.g. "Collect Name", "Qualify Interest") so the workflow is readable at a glance.
+  </Accordion>
+</AccordionGroup>

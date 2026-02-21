@@ -1,0 +1,89 @@
+---
+title: "Alerting"
+description: "Set up threshold-based alerts on any metric with email notifications."
+---
+
+# Alerting
+
+Alerting lets you define rules that automatically monitor your call metrics and notify you when something goes wrong. Get alerted when call volume drops, duration spikes, or custom metrics cross thresholds — without staring at dashboards all day.
+
+## How It Works
+
+1. You create an **alert rule** with a metric, threshold, and evaluation window
+2. Callem Studio evaluates the rule at a configurable frequency
+3. When the threshold is crossed, an **incident** is created and email notifications are sent
+4. When the metric returns to normal, the incident is automatically resolved
+
+## Creating an Alert Rule
+
+Navigate to **Monitor > Alerting** and click **Create Rule**.
+
+### Rule Configuration
+
+| Field | Description |
+|-------|-------------|
+| **Name** | Descriptive name for the alert (e.g. "Low engagement rate") |
+| **Metric** | What to measure (total calls, avg duration, engagement rate, or a custom rate) |
+| **Agents** | Which agents to monitor (one, multiple, or all) |
+| **Threshold type** | **Absolute** (compare to a fixed value) or **Relative** (compare to previous period) |
+| **Comparator** | Greater than, less than, greater or equal, less or equal |
+| **Threshold value** | The value that triggers the alert |
+| **Evaluation window** | How far back to look (1 min to 12 hours) |
+| **Frequency** | How often to check (1 min to 1 day) |
+| **Notification emails** | Who to notify when the alert fires |
+
+### Custom Rate Metrics
+
+Define alerts on calculated percentages by specifying a numerator and denominator filter:
+
+**Example**: "Alert when the hot lead rate drops below 20%"
+- Numerator filter: `callAnalysis.leadQuality = hot`
+- Denominator filter: `isEngaged = true`
+- Threshold: `< 20`
+
+### Call Analysis Filters
+
+Add conditions based on custom call analysis fields to create highly specific alerts:
+
+- `callAnalysis.sentiment = negative` — alert on negative sentiment spikes
+- `callAnalysis.appointmentBooked = true` — track booking rates
+
+### Evaluation Schedule
+
+By default, alerts evaluate 24/7. You can restrict evaluation to specific windows:
+
+- **Days**: select which days of the week
+- **Time ranges**: e.g. Monday to Friday, 9:00 to 18:00
+
+This prevents false alarms during off-hours when low volume is expected.
+
+## Alert States
+
+| State | Description |
+|-------|-------------|
+| **OK** | Metric is within normal range |
+| **Firing** | Threshold has been crossed — incident created, notifications sent |
+| **Resolved** | Metric returned to normal — incident closed automatically |
+
+## Alert Rules List
+
+The alert rules list shows each rule with:
+
+- **Status**: enabled/disabled toggle
+- **Last metric value**: the most recent measured value (useful for debugging)
+- **Last evaluated**: when the rule was last checked
+- **Badges**: Custom Rate, Scheduled, or other indicators
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Start with broad alerts">
+    Begin with high-level alerts (total calls, engagement rate) before adding specific custom rate alerts.
+  </Accordion>
+  <Accordion title="Set reasonable thresholds">
+    Look at your historical metrics to set thresholds that catch real issues without creating alert fatigue.
+  </Accordion>
+  <Accordion title="Use schedules for business-hours metrics">
+    If your agents only receive calls during business hours, schedule alerts accordingly to avoid false positives at night.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,91 @@
+---
+title: "List Calls"
+description: "Retrieve a paginated list of calls for your project."
+---
+
+# List Calls
+
+Retrieve a paginated list of calls belonging to the authenticated project.
+
+## Endpoint
+
+```
+GET /v1/calls
+```
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | `100` | Number of calls to return (max 1000) |
+| `offset` | integer | `0` | Number of calls to skip (for pagination) |
+
+## Request
+
+```bash
+curl -X GET "https://api.callem.ai/v1/calls?limit=50&offset=0" \
+  -H "Authorization: Bearer ck_live_your_api_key_here"
+```
+
+## Response
+
+```json
+{
+  "data": [
+    {
+      "id": "6789abcdef0123456789abcd",
+      "status": "completed",
+      "duration": 145,
+      "summary": "The caller asked about appointment availability next Tuesday. The agent checked the calendar and booked a 2pm slot.",
+      "evaluation": "success",
+      "endedReason": "user_hangup",
+      "callerNumber": "+33612345678",
+      "calledNumber": "+33198765432",
+      "isEngaged": true,
+      "callAnalysis": {
+        "sentiment": "positive",
+        "leadQuality": "hot",
+        "appointmentBooked": true
+      },
+      "transcript": [
+        { "role": "assistant", "content": "Hello, thank you for calling Acme Clinic. How can I help you today?" },
+        { "role": "user", "content": "Hi, I'd like to book an appointment for next Tuesday." },
+        { "role": "assistant", "content": "Of course! I have a 2pm slot available. Would that work for you?" },
+        { "role": "user", "content": "Perfect, yes please." },
+        { "role": "assistant", "content": "Great, I've booked you in for Tuesday at 2pm. See you then!" }
+      ],
+      "createdAt": "2025-12-15T14:30:00.000Z",
+      "updatedAt": "2025-12-15T14:32:25.000Z"
+    }
+  ],
+  "pagination": {
+    "total": 1432,
+    "limit": 50,
+    "offset": 0
+  }
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique call identifier |
+| `status` | string | `"completed"` or `"live"` |
+| `duration` | number | Call duration in seconds |
+| `summary` | string \| null | AI-generated call summary |
+| `evaluation` | string \| null | Call evaluation (success/fail) |
+| `endedReason` | string \| null | Reason the call ended |
+| `callerNumber` | string \| null | Caller's phone number |
+| `calledNumber` | string \| null | Called phone number |
+| `isEngaged` | boolean | Whether the call was a meaningful conversation |
+| `callAnalysis` | object \| null | Custom analysis fields extracted from the call |
+| `transcript` | array | Conversation transcript |
+| `transcript[].role` | string | `"user"` or `"assistant"` |
+| `transcript[].content` | string | Message content |
+| `createdAt` | string | ISO 8601 timestamp |
+| `updatedAt` | string | ISO 8601 timestamp |
+
+<Note>
+  Fields like `projectId`, `agentCollectionId`, `messagesIds`, `audio`, `totalCost`, and internal transcription metadata are excluded from the public API response.
+</Note>

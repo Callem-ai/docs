@@ -1,0 +1,61 @@
+---
+title: "Get Call"
+description: "Retrieve details of a specific call."
+---
+
+# Get Call
+
+Retrieve the full details of a single call by its ID.
+
+## Endpoint
+
+```
+GET /v1/calls/:id
+```
+
+## Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | The call ID |
+
+## Request
+
+```bash
+curl -X GET "https://api.callem.ai/v1/calls/6789abcdef0123456789abcd" \
+  -H "Authorization: Bearer ck_live_your_api_key_here"
+```
+
+## Response
+
+Returns a single call object with the same structure as items in the [List Calls](/api-reference/calls/list-calls) response.
+
+```json
+{
+  "id": "6789abcdef0123456789abcd",
+  "status": "completed",
+  "duration": 145,
+  "summary": "The caller asked about appointment availability...",
+  "evaluation": "success",
+  "endedReason": "user_hangup",
+  "callerNumber": "+33612345678",
+  "calledNumber": "+33198765432",
+  "isEngaged": true,
+  "callAnalysis": {
+    "sentiment": "positive",
+    "leadQuality": "hot"
+  },
+  "transcript": [
+    { "role": "assistant", "content": "Hello, how can I help you?" },
+    { "role": "user", "content": "I'd like to book an appointment." }
+  ],
+  "createdAt": "2025-12-15T14:30:00.000Z",
+  "updatedAt": "2025-12-15T14:32:25.000Z"
+}
+```
+
+## Errors
+
+| Code | Description |
+|------|-------------|
+| `404` | Call not found, or belongs to a different project |

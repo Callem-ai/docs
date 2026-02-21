@@ -1,0 +1,46 @@
+---
+title: "Delete Call"
+description: "Delete a specific call record."
+---
+
+# Delete Call
+
+Permanently delete a call record and its associated data.
+
+## Endpoint
+
+```
+DELETE /v1/calls/:id
+```
+
+## Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | The call ID to delete |
+
+## Request
+
+```bash
+curl -X DELETE "https://api.callem.ai/v1/calls/6789abcdef0123456789abcd" \
+  -H "Authorization: Bearer ck_live_your_api_key_here"
+```
+
+## Response
+
+```json
+{
+  "id": "6789abcdef0123456789abcd",
+  "deleted": true
+}
+```
+
+## Errors
+
+| Code | Description |
+|------|-------------|
+| `404` | Call not found, or belongs to a different project |
+
+<Warning>
+  This action is permanent and cannot be undone. The call record, transcript, and all associated data will be permanently deleted.
+</Warning>

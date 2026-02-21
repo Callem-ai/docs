@@ -1,0 +1,46 @@
+---
+title: "Delete Knowledge"
+description: "Delete a knowledge base item and its associated vector embeddings."
+---
+
+# Delete Knowledge
+
+Permanently delete a knowledge base item and all its associated vector embeddings.
+
+## Endpoint
+
+```
+DELETE /v1/knowledge/:id
+```
+
+## Path Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | The knowledge item ID to delete |
+
+## Request
+
+```bash
+curl -X DELETE "https://api.callem.ai/v1/knowledge/abc123def456789012345678" \
+  -H "Authorization: Bearer ck_live_your_api_key_here"
+```
+
+## Response
+
+```json
+{
+  "id": "abc123def456789012345678",
+  "deleted": true
+}
+```
+
+## Errors
+
+| Code | Description |
+|------|-------------|
+| `404` | Knowledge item not found, or belongs to a different project |
+
+<Warning>
+  This action is permanent. The knowledge item and all associated vector embeddings will be deleted. Any agent using this knowledge base will no longer have access to this content.
+</Warning>
