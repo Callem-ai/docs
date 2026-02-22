@@ -38,24 +38,35 @@ The visual editor lets you build workflows by connecting **nodes** on a canvas. 
 
 The Start node configures the initial behavior of every call in the workflow:
 
-### Welcome Message
-The first thing the agent says when the call begins. Set this to greet the caller and explain the purpose of the call.
-
-### Language
-Primary language for the call. Affects both speech recognition (STT) and text-to-speech (TTS).
-
-### Background Sound
-Add ambient audio to create a more natural call experience:
+### General
 
 | Setting | Description |
 |---------|-------------|
-| **Enabled** | Toggle background sound on/off |
-| **Sound** | Choose from a library of pre-configured ambient sounds (e.g. office, call center) |
-| **Volume** | Adjust the volume level relative to the agent's voice |
+| **Welcome message** | The first thing the agent says when the call begins |
+| **Global prompt** | Instructions shared across all workflow states (tone, personality, constraints) |
 
-### TTS Settings
+### Text-to-Speech (TTS)
 
-When available, you can configure provider-specific TTS settings directly in the Start node. Available settings depend on the selected TTS provider and may include options like model selection (displayed as dropdown menus when the provider supports multiple models).
+The Start node includes a full TTS configuration:
+
+| Setting | Description |
+|---------|-------------|
+| **Voice** | Select a voice from the voice library (browse by language, gender, provider) |
+| **Voice Settings** | Provider-specific settings that appear dynamically based on the selected voice. Can include model selection (dropdown), speed, and other provider-specific parameters. |
+
+<Tip>
+  The TTS voice configured in the Start node applies to the entire workflow. All conversation steps will use this voice.
+</Tip>
+
+### Background Sound
+
+Add ambient audio to create a more natural call experience:
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Enabled** | Toggle background sound on/off | Off |
+| **Sound** | Choose from a library of pre-configured ambient sounds (e.g. office, call center) | — |
+| **Volume** | Adjust the volume level (0–100%) | `50%` |
 
 ---
 

@@ -1,15 +1,29 @@
 ---
 title: "Tools"
-description: "Define custom functions and API integrations your agents can invoke during calls."
+description: "Define custom functions, call transfers, and call termination rules your agents can invoke during calls."
 ---
 
 # Tools
 
-Tools extend your agent's capabilities beyond conversation. They allow the agent to perform real actions during a call — like booking appointments, looking up customer records, checking inventory, or triggering webhooks.
+Tools extend your agent's capabilities beyond conversation. They allow the agent to perform real actions during a call — like calling an external API, transferring the call to a human, or ending the call based on specific conditions.
 
-## How Tools Work
+## Tool Types
 
-Tools leverage the **function calling** capability of modern LLMs:
+Callem Studio supports three types of tools:
+
+| Type | Description | Use Case |
+|------|-------------|----------|
+| **HTTP Tool** | Calls an external API endpoint with extracted parameters | Booking appointments, CRM lookups, checking inventory |
+| **Transfer Call** | Transfers the call to another phone number based on conditions | Escalation to human agent, routing to a specialist |
+| **End Call** | Ends the call based on defined conditions | Hang up when the conversation goal is achieved, or when the caller is abusive |
+
+---
+
+## HTTP Tool
+
+HTTP tools leverage the **function calling** capability of modern LLMs to invoke external APIs during a conversation.
+
+### How It Works
 
 <Steps>
   <Step title="Define the tool">
@@ -29,26 +43,32 @@ Tools leverage the **function calling** capability of modern LLMs:
   </Step>
 </Steps>
 
-## Creating a Tool
-
-1. Navigate to **Build > Tools**
-2. Click **New Tool**
-3. Configure the tool settings (see below)
-
-## Tool Configuration
+### HTTP Tool Configuration
 
 | Field | Description | Tips |
 |-------|-------------|------|
-| **Name** | Function name the LLM will reference | Use `snake_case` (e.g. `book_appointment`, `check_stock`). Keep it descriptive but concise. |
+| **Name** | Function name the LLM will reference | Use `snake_case` (e.g. `book_appointment`, `check_stock`). Only letters, digits, underscores and dashes allowed. Max 64 characters. |
 | **Description** | Explains when and why to use this tool | This is the most important field — the LLM reads it to decide when to invoke the tool. Be explicit about trigger conditions. |
 | **Parameters** | JSON Schema defining expected inputs | Define every parameter with a type and description. Mark required fields. |
-| **Endpoint URL** | HTTP endpoint called with the parameters | Must be publicly accessible. Use HTTPS for security. |
+| **Endpoint URL** | HTTP endpoint called with the parameters | Must be a valid URL starting with `http://` or `https://`. |
 | **Method** | HTTP method (GET, POST, etc.) | POST is recommended for actions, GET for lookups. |
 | **Headers** | Custom headers (e.g. authorization tokens) | Include API keys or auth tokens needed by your endpoint. |
+| **Query Params** | URL query parameters | For GET requests or additional filtering. |
+| **Authentication** | Built-in auth configuration | Location (header/query), key name, and value. |
+| **Timeout** | Maximum time to wait for a response (seconds) | Default: `10s`. Increase for slow APIs. |
+| **Async** | Execute without waiting for response | Enable for fire-and-forget actions (e.g. logging, notifications) where the agent doesn't need the result to continue. |
+
+### Async Mode
+
+When **async** is enabled, the agent sends the API request but does not wait for the response before continuing the conversation. This is useful for:
+
+- Logging events to an external system
+- Sending notifications (email, SMS, Slack)
+- Triggering background processes that don't affect the conversation flow
 
 ### Writing Effective Descriptions
 
-The tool description is critical — it tells the LLM **when** to use the tool. Poor descriptions lead to missed invocations or false triggers.
+The tool description is critical — it tells the LLM **when** to use the tool.
 
 **Bad description:**
 > "Handles appointments"
@@ -63,7 +83,7 @@ Parameters use [JSON Schema](https://json-schema.org/) format. Each parameter ne
 - `type` — data type (`string`, `number`, `boolean`, `object`, `array`)
 - `description` — what this parameter represents (the LLM reads this to extract the right value from the conversation)
 
-## Example: Appointment Booking Tool
+### Example: Appointment Booking Tool
 
 ```json
 {
@@ -94,12 +114,12 @@ Parameters use [JSON Schema](https://json-schema.org/) format. Each parameter ne
 }
 ```
 
-## Example: CRM Lookup Tool
+### Example: CRM Lookup Tool
 
 ```json
 {
   "name": "lookup_customer",
-  "description": "Look up a customer record in the CRM by phone number. Use this tool at the start of the call to check if the caller is an existing customer and personalize the conversation.",
+  "description": "Look up a customer record in the CRM by phone number. Use at the start of the call to check if the caller is an existing customer.",
   "parameters": {
     "type": "object",
     "properties": {
@@ -113,14 +133,60 @@ Parameters use [JSON Schema](https://json-schema.org/) format. Each parameter ne
 }
 ```
 
+---
+
+## Transfer Call Tool
+
+The Transfer Call tool lets you define conditions under which the agent should transfer the call to another phone number.
+
+### Configuration
+
+Each Transfer Call tool contains one or more **conditions**, each with:
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| **Condition** | A natural language description of when to transfer | "The caller explicitly asks to speak with a human agent" |
+| **Number** | The phone number to transfer to | `+33123456789` |
+
+You can define multiple conditions with different target numbers:
+
+| Condition | Number |
+|-----------|--------|
+| "Caller requests technical support" | `+33 1 23 45 67 89` |
+| "Caller wants to speak with sales" | `+33 1 98 76 54 32` |
+| "Caller is upset and asks for a manager" | `+33 1 11 22 33 44` |
+
+<Tip>
+  Write conditions as clearly as possible. The LLM evaluates these conditions against the conversation context to decide when to trigger the transfer.
+</Tip>
+
+---
+
+## End Call Tool
+
+The End Call tool lets you define conditions under which the agent should terminate the call.
+
+### Configuration
+
+Each End Call tool contains one or more **conditions**:
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| **Condition** | A natural language description of when to end the call | "The caller has confirmed their appointment and has no further questions" |
+
+Multiple conditions can be defined:
+
+| Condition |
+|-----------|
+| "The conversation goal has been achieved and the caller says goodbye" |
+| "The caller is abusive or uses inappropriate language" |
+| "The caller has been silent for an extended period after the reminder" |
+
+---
+
 ## Linking Tools to an Agent
 
-You can attach tools to agents in two ways:
-
-1. **From the Agent's Model tab** → Knowledge & Tools section → select tools from the dropdown
-2. **From the Tools page** → manage which agents use each tool
-
-Tools can be shared across multiple agents.
+You can attach tools to agents in the agent's **Model** tab → **Knowledge & Tools** section. Select one or more tools from the dropdown. Tools can be shared across multiple agents.
 
 ## Tool Invocation During Calls
 
@@ -136,17 +202,20 @@ When a tool is invoked during a call, you can see it in:
   <Accordion title="Write precise, condition-specific descriptions">
     The LLM uses the tool description to decide when to call it. Include explicit trigger conditions and counter-conditions. For example: "Use when X. Do NOT use when Y."
   </Accordion>
-  <Accordion title="Return human-readable responses">
-    Your API endpoint should return clear messages the agent can relay to the caller. Instead of `{"status": 200, "id": "apt_123"}`, return `{"message": "Appointment confirmed for Tuesday March 15 at 3:00 PM. Confirmation number: APT-123."}`.
+  <Accordion title="Return human-readable responses from HTTP tools">
+    Your API endpoint should return clear messages the agent can relay to the caller. Instead of `{"status": 200, "id": "apt_123"}`, return `{"message": "Appointment confirmed for Tuesday March 15 at 3:00 PM."}`.
   </Accordion>
   <Accordion title="Handle errors gracefully">
-    Return meaningful error messages. The agent will relay these to the caller. Example: `{"error": "No available slots on that date. Please suggest an alternative."}`.
+    Return meaningful error messages from HTTP endpoints. The agent will relay these to the caller. Example: `{"error": "No available slots on that date. Please suggest an alternative."}`.
+  </Accordion>
+  <Accordion title="Use async for fire-and-forget actions">
+    Enable async mode for tools that log events, send notifications, or trigger background processes where the agent doesn't need to wait for a response.
   </Accordion>
   <Accordion title="One tool = one action">
     Don't create a "do everything" tool. Split complex workflows into multiple tools with clear responsibilities. The LLM handles orchestration between tools naturally.
   </Accordion>
-  <Accordion title="Validate inputs server-side">
-    Don't trust the LLM to always extract parameters perfectly. Validate all inputs in your API endpoint and return clear error messages if something is missing or malformed.
+  <Accordion title="Use Transfer Call for escalation paths">
+    Instead of hardcoding transfer numbers in the system prompt, use a Transfer Call tool with explicit conditions. This makes the logic visible, editable, and independent from the prompt.
   </Accordion>
   <Accordion title="Test with real scenarios">
     Call your agent and try to trigger each tool. Verify the parameters are passed correctly and the response is used appropriately in the conversation.

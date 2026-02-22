@@ -117,43 +117,55 @@ Semantic VAD uses the LLM to determine when the caller has finished speaking, ra
   Enable Semantic VAD for complex conversations where callers may pause to think. Disable it for simple, fast-paced interactions (e.g. appointment confirmations) where silence-based detection is sufficient.
 </Tip>
 
-### End of Speech Threshold
+### Silence Confirmation Delay (End of Speech Threshold)
 
-The silence duration (in milliseconds) before the system considers the caller has finished speaking. Lower values make the agent more responsive but may cut the caller off. Higher values are more patient but introduce latency.
+The silence duration (in seconds) before the system considers the caller has finished speaking. Lower values make the agent more responsive but may cut the caller off. Higher values are more patient but introduce latency.
 
-| Value | Behavior |
+| Setting | Value |
+|---------|-------|
+| **Minimum** | `0.5s` |
+| **Maximum** | `5s` |
+| **Default** | `1.5s` |
+
+| Range | Behavior |
 |-------|----------|
-| **200-400ms** | Very responsive, risks interrupting pauses |
-| **500-800ms** | Good balance for most use cases |
-| **1000ms+** | Very patient, best for elderly callers or complex topics |
+| **0.5–1.0s** | Very responsive, risks interrupting pauses |
+| **1.0–2.0s** | Good balance for most use cases |
+| **2.0–5.0s** | Very patient, best for elderly callers or complex topics |
 
 ### Interruption Config
 
 Controls whether and how the caller can interrupt the agent while it's speaking.
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| **Enabled** | Allow caller to interrupt the agent | Off |
-| **Minimum words** | Minimum words the caller must say before the interruption is registered | `3` |
-| **Minimum duration** | Minimum duration (ms) of caller speech before interruption triggers | `15` |
+| Setting | Description | Min | Max | Default |
+|---------|-------------|-----|-----|---------|
+| **Enabled** | Allow caller to interrupt the agent | — | — | Off |
+| **Minimum words** | Minimum words the caller must say before the interruption is registered | `1` | `10` | `3` |
+| **Minimum duration** | Minimum duration (in seconds) of caller speech before interruption triggers | `1` | `60` | `15` |
 
-### Reminder Message
+### Inactivity Timeout (Reminder Message)
 
-Time in seconds before the agent sends a reminder message if the caller remains silent. Set to `0` to disable.
+Time in seconds before the agent sends a reminder message if the caller remains silent.
+
+| Setting | Value |
+|---------|-------|
+| **Minimum** | `6s` |
+| **Maximum** | `30s` |
+| **Default** | `15s` |
 
 ### Voice Speed
 
-Adjust the speaking speed of the agent's voice. `1.0` is normal speed.
+Adjust the speaking speed of the agent's voice. `1.0` is normal speed. Available when the TTS provider supports speed adjustment (displayed dynamically based on provider settings).
 
 ### Background Sound
 
 Add ambient background audio to make calls feel more natural (e.g. office ambiance, call center sounds).
 
-| Setting | Description |
-|---------|-------------|
-| **Enabled** | Toggle background sound on/off |
-| **Sound** | Select from a library of pre-configured ambient sounds |
-| **Volume** | Adjust the volume level (0-100%) |
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Enabled** | Toggle background sound on/off | Off |
+| **Sound** | Select from a library of pre-configured ambient sounds | — |
+| **Volume** | Adjust the volume level (0–100%) | `50%` |
 
 ---
 
