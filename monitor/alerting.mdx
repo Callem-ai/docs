@@ -5,14 +5,24 @@ description: "Set up threshold-based alerts on any metric with email notificatio
 
 # Alerting
 
-Alerting lets you define rules that automatically monitor your call metrics and notify you when something goes wrong. Get alerted when call volume drops, duration spikes, or custom metrics cross thresholds — without staring at dashboards all day.
+Alerting lets you define rules that automatically monitor your call metrics and notify you when something goes wrong — or right. Get alerted when call volume drops, latency spikes, or custom business metrics cross thresholds, without staring at dashboards all day.
 
 ## How It Works
 
-1. You create an **alert rule** with a metric, threshold, and evaluation window
-2. Callem Studio evaluates the rule at a configurable frequency
-3. When the threshold is crossed, an **incident** is created and email notifications are sent
-4. When the metric returns to normal, the incident is automatically resolved
+<Steps>
+  <Step title="Define a rule">
+    Create an alert rule with a metric, threshold, agents to monitor, and evaluation parameters.
+  </Step>
+  <Step title="Automatic evaluation">
+    Callem Studio evaluates the rule at your configured frequency (every minute to once a day).
+  </Step>
+  <Step title="Incident creation">
+    When the threshold is crossed, an incident is created and email notifications are sent to the configured recipients.
+  </Step>
+  <Step title="Auto-resolution">
+    When the metric returns to normal, the incident is automatically resolved.
+  </Step>
+</Steps>
 
 ## Creating an Alert Rule
 
@@ -20,70 +30,130 @@ Navigate to **Monitor > Alerting** and click **Create Rule**.
 
 ### Rule Configuration
 
-| Field | Description |
-|-------|-------------|
-| **Name** | Descriptive name for the alert (e.g. "Low engagement rate") |
-| **Metric** | What to measure (total calls, avg duration, engagement rate, or a custom rate) |
-| **Agents** | Which agents to monitor (one, multiple, or all) |
-| **Threshold type** | **Absolute** (compare to a fixed value) or **Relative** (compare to previous period) |
-| **Comparator** | Greater than, less than, greater or equal, less or equal |
-| **Threshold value** | The value that triggers the alert |
-| **Evaluation window** | How far back to look (1 min to 12 hours) |
-| **Frequency** | How often to check (1 min to 1 day) |
-| **Notification emails** | Who to notify when the alert fires |
+| Field | Description | Options |
+|-------|-------------|---------|
+| **Name** | Descriptive name for the alert | e.g. "Low engagement rate", "High latency warning" |
+| **Metric** | What to measure | Total calls, Avg duration, Engagement rate, Transfer rate, Voicemail rate, LLM latency, TTS latency, Global latency, or a **Custom rate** |
+| **Agents** | Which agents to monitor | Select one, multiple, or all agents. Use Select All / Deselect All for convenience. |
 
-### Custom Rate Metrics
+### Threshold Configuration
 
-Define alerts on calculated percentages by specifying a numerator and denominator filter:
+| Setting | Description |
+|---------|-------------|
+| **Threshold type** | **Absolute** — compare the metric value directly to a fixed number (e.g. engagement rate < 50%). **Relative** — compare the current value to the previous period's value (e.g. call volume dropped by 30% compared to yesterday). |
+| **Comparator** | `>` Greater than, `>=` Greater or equal, `<` Less than, `<=` Less or equal |
+| **Threshold value** | The value that triggers the alert. For absolute, this is the raw metric value. For relative, this is the percentage change. |
 
-**Example**: "Alert when the hot lead rate drops below 20%"
-- Numerator filter: `callAnalysis.leadQuality = hot`
-- Denominator filter: `isEngaged = true`
-- Threshold: `< 20`
+### Evaluation Parameters
 
-### Call Analysis Filters
+| Setting | Description | Values |
+|---------|-------------|--------|
+| **Evaluation window** | How far back to look when computing the metric | 1 minute to 12 hours |
+| **Frequency** | How often to evaluate the rule | 1 minute, 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, 12 hours, 1 day |
+| **Notification emails** | Comma-separated list of email addresses to notify | — |
 
-Add conditions based on custom call analysis fields to create highly specific alerts:
+---
 
-- `callAnalysis.sentiment = negative` — alert on negative sentiment spikes
-- `callAnalysis.appointmentBooked = true` — track booking rates
+## Custom Rate Metrics
 
-### Evaluation Schedule
+Beyond built-in metrics, you can define alerts on **calculated percentages** by specifying numerator and denominator filters:
 
-By default, alerts evaluate 24/7. You can restrict evaluation to specific windows:
+### How Custom Rates Work
 
-- **Days**: select which days of the week
-- **Time ranges**: e.g. Monday to Friday, 9:00 to 18:00
+A custom rate is calculated as:
 
-This prevents false alarms during off-hours when low volume is expected.
+$$\text{Rate} = \frac{\text{Calls matching numerator conditions}}{\text{Calls matching denominator conditions}} \times 100$$
+
+### Examples
+
+| Alert | Numerator | Denominator | Threshold |
+|-------|-----------|-------------|-----------|
+| Hot lead rate too low | `callAnalysis.leadQuality = hot` | `isEngaged = true` | `< 20%` |
+| Appointment booking rate | `callAnalysis.appointmentBooked = true` | All calls | `< 15%` |
+| Negative sentiment spike | `callAnalysis.sentiment = negative` | `isEngaged = true` | `> 25%` |
+| Automated call success | `callAnalysis.issueResolved = true` | `endedReason != voicemail` | `< 70%` |
+
+### Condition Logic
+
+Both numerator and denominator support multiple conditions combined with **AND** or **OR** logic.
+
+---
+
+## Call Analysis Filters
+
+Add conditions based on your custom [call analysis fields](/build/agents#call-analysis-tab) to create highly targeted alerts. The available fields are loaded dynamically from your agent configurations.
+
+**Built-in filter fields:**
+- `duration`, `isEngaged`, `endedReason`, `callerNum`, `calledNum`, `totalInteraction`
+
+**Call Analysis filter fields** (from your agent config):
+- Any field you've defined (e.g. `sentiment`, `leadQuality`, `appointmentBooked`, `npsScore`)
+
+These fields appear in a separate "Call Analysis" section in the filter UI.
+
+---
+
+## Evaluation Schedule
+
+By default, alerts evaluate **24/7**. You can restrict evaluation to specific windows to prevent false alarms during off-hours:
+
+| Setting | Description |
+|---------|-------------|
+| **Days** | Select which days of the week (e.g. Monday to Friday) |
+| **Time ranges** | One or more time windows (e.g. 9:00-13:00 and 14:00-20:00) |
+| **Hourly frequency** | Evaluate once per hour instead of continuous |
+
+**Example**: "Only evaluate this alert Monday to Friday, 9:00-13:00 and 14:00-18:00" — avoids alerts during nights, lunch breaks, and weekends when low volume is expected.
+
+<Tip>
+  Scheduling is particularly useful for volume-based alerts. A "total calls < 10" alert would fire every night if evaluated 24/7, but is meaningful only during business hours.
+</Tip>
+
+---
 
 ## Alert States
 
-| State | Description |
-|-------|-------------|
-| **OK** | Metric is within normal range |
-| **Firing** | Threshold has been crossed — incident created, notifications sent |
-| **Resolved** | Metric returned to normal — incident closed automatically |
+| State | Description | Visual |
+|-------|-------------|--------|
+| **OK** | Metric is within normal range | Green indicator |
+| **Firing** | Threshold has been crossed — incident created, notifications sent | Red indicator |
+| **Resolved** | Metric returned to normal — incident closed automatically | Returns to green |
+
+---
 
 ## Alert Rules List
 
-The alert rules list shows each rule with:
+The alert rules list provides an at-a-glance view of all your rules:
 
-- **Status**: enabled/disabled toggle
-- **Last metric value**: the most recent measured value (useful for debugging)
-- **Last evaluated**: when the rule was last checked
-- **Badges**: Custom Rate, Scheduled, or other indicators
+| Column | Description |
+|--------|-------------|
+| **Name** | Alert rule name |
+| **Status** | Enabled/disabled toggle |
+| **State** | Current state (OK / Firing) |
+| **Last metric value** | The most recently measured value — useful for verifying that the alert definition is correct and the evaluation is working |
+| **Last evaluated** | When the rule was last checked |
+| **Badges** | Indicators for Custom Rate, Scheduled, etc. |
+
+<Tip>
+  Use **Last metric value** and **Last evaluated** to verify your alert rules are working correctly. If the value seems wrong, review your metric definition and filters.
+</Tip>
 
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="Start with broad alerts">
-    Begin with high-level alerts (total calls, engagement rate) before adding specific custom rate alerts.
+  <Accordion title="Start with broad, high-impact alerts">
+    Begin with alerts on critical metrics: total call volume (is the system working?), engagement rate (are calls successful?), and global latency (is the agent responsive?). Add specific custom rate alerts once the basics are covered.
   </Accordion>
-  <Accordion title="Set reasonable thresholds">
-    Look at your historical metrics to set thresholds that catch real issues without creating alert fatigue.
+  <Accordion title="Set thresholds from historical data">
+    Look at your analytics dashboard to understand normal metric ranges before setting thresholds. A threshold that's too tight creates alert fatigue; too loose misses real issues.
   </Accordion>
-  <Accordion title="Use schedules for business-hours metrics">
-    If your agents only receive calls during business hours, schedule alerts accordingly to avoid false positives at night.
+  <Accordion title="Use schedules to reduce noise">
+    If your agents only handle calls during business hours, schedule volume and rate alerts accordingly. Latency alerts can often run 24/7 since they indicate system health.
+  </Accordion>
+  <Accordion title="Combine built-in and custom rate alerts">
+    Built-in metrics catch infrastructure issues (latency, volume drops). Custom rates catch business quality issues (lead quality, appointment rates, sentiment).
+  </Accordion>
+  <Accordion title="Review and tune regularly">
+    As your call patterns change (seasonal volume, new agents, new prompts), revisit your alert thresholds and schedules to keep them relevant.
   </Accordion>
 </AccordionGroup>

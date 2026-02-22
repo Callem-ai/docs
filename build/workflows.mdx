@@ -9,71 +9,139 @@ Workflows let you design structured, multi-step conversation flows using a visua
 
 ## When to Use Workflows
 
-Use workflows when you need:
+| Scenario | Agent Type |
+|----------|-----------|
+| Simple Q&A, open-ended conversations | Single-prompt agent |
+| Structured scripts, surveys, qualification flows | **Workflow agent** |
+| Conditional logic, multi-path routing | **Workflow agent** |
+| Data collection with validation at each step | **Workflow agent** |
 
-- **Structured conversations** with a defined sequence of questions
-- **Branching logic** based on caller responses
-- **Multi-step processes** like qualification surveys or intake forms
-- **Complex routing** with conditional transfers or escalation paths
-
-For simple Q&A or open-ended conversations, a single-prompt agent with a knowledge base is usually sufficient.
+Use workflows when you need predictable, repeatable conversation paths. For flexible, open-ended interactions, a single-prompt agent with a knowledge base is usually sufficient.
 
 ## Workflow Editor
 
-The visual editor lets you build workflows by connecting **nodes** on a canvas:
+The visual editor lets you build workflows by connecting **nodes** on a canvas. Each node represents a step in the conversation, and edges define the flow between steps.
 
 ### Node Types
 
-| Node | Description |
-|------|-------------|
-| **Start** | Entry point — configure initial greeting, language, and background sound |
-| **Conversation** | A step where the agent speaks and/or listens — define prompts and expected responses |
-| **Condition** | Branch the flow based on caller input or collected data |
-| **Transfer** | Transfer the call to a human agent or another number |
-| **End** | Terminate the call with an optional closing message |
+| Node | Description | Key Settings |
+|------|-------------|--------------|
+| **Start** | Entry point of every workflow | Welcome message, language, background sound |
+| **Conversation** | The agent speaks and/or listens | Step prompt, expected responses, data extraction |
+| **Condition** | Branch based on caller input or collected data | Conditions, comparison operators |
+| **Transfer** | Hand off the call to a human or another number | Transfer target, transfer message |
+| **End** | Terminate the call | Closing message |
 
-### Start Node Properties
+---
 
-The Start node configures the initial behavior of the call:
+## Start Node Properties
 
-- **Welcome message**: first thing the agent says
-- **Language**: primary language for the call
-- **Background sound**: optional ambient audio with volume control
+The Start node configures the initial behavior of every call in the workflow:
 
-### Connections
+### Welcome Message
+The first thing the agent says when the call begins. Set this to greet the caller and explain the purpose of the call.
 
-Nodes are connected by **edges** that define the flow. Each edge can have conditions that determine which path the conversation takes.
+### Language
+Primary language for the call. Affects both speech recognition (STT) and text-to-speech (TTS).
+
+### Background Sound
+Add ambient audio to create a more natural call experience:
+
+| Setting | Description |
+|---------|-------------|
+| **Enabled** | Toggle background sound on/off |
+| **Sound** | Choose from a library of pre-configured ambient sounds (e.g. office, call center) |
+| **Volume** | Adjust the volume level relative to the agent's voice |
+
+### TTS Settings
+
+When available, you can configure provider-specific TTS settings directly in the Start node. Available settings depend on the selected TTS provider and may include options like model selection (displayed as dropdown menus when the provider supports multiple models).
+
+---
+
+## Conversation Node
+
+Each Conversation node represents one step where the agent speaks and optionally collects information:
+
+- **Step prompt**: what the agent should say and how to respond to the caller
+- **Data extraction**: variables to extract from the caller's response
+- **Validation**: conditions that must be met before moving to the next step
+
+## Condition Node
+
+Condition nodes enable branching logic:
+
+- Evaluate variables collected in previous steps
+- Compare values (equals, contains, greater than, etc.)
+- Route to different paths based on the result
+
+**Example**: After collecting the caller's interest level:
+- If `interest = high` → route to appointment booking
+- If `interest = low` → route to email follow-up
+- Otherwise → route to general information
+
+## Transfer Node
+
+Transfer the call to a human agent or external number:
+
+- **Transfer target**: phone number or SIP address
+- **Transfer message**: what the agent says before transferring (e.g. "I'm connecting you with a specialist now")
+
+## End Node
+
+Terminate the call gracefully:
+
+- **Closing message**: optional farewell message (e.g. "Thank you for calling. Have a great day!")
+
+---
 
 ## Building a Workflow
 
 <Steps>
-  <Step title="Create a new workflow">
-    Navigate to **Build > Agents**, select an agent, and switch to the **Workflow** tab.
+  <Step title="Create a workflow agent">
+    Navigate to Build > Agents, click **New Workflow Agent**, and name it.
   </Step>
   <Step title="Configure the Start node">
-    Set the welcome message, language, and any initial parameters.
+    Set the welcome message, language, background sound, and TTS settings.
   </Step>
   <Step title="Add conversation steps">
     Drag Conversation nodes onto the canvas. Define what the agent should say and what information to collect at each step.
   </Step>
   <Step title="Add branching logic">
-    Use Condition nodes to route the call based on collected data (e.g. "If caller is interested, go to Step 3; otherwise, go to End").
+    Use Condition nodes to route the call based on collected data. Connect the condition outputs to different Conversation, Transfer, or End nodes.
   </Step>
-  <Step title="Connect and save">
-    Draw edges between nodes to define the flow. Click **Save** to persist the workflow.
+  <Step title="Connect nodes">
+    Draw edges between nodes to define the flow. Every path must eventually reach an End or Transfer node.
+  </Step>
+  <Step title="Save and test">
+    Click Save to persist the workflow. Test by calling the assigned phone number or using the built-in chat.
   </Step>
 </Steps>
+
+## Global Prompt
+
+Workflow agents have a **Global Prompt** (instead of a System Prompt). This prompt applies to all steps in the workflow and defines the agent's overall behavior, tone, and constraints. Individual step prompts complement the global prompt with step-specific instructions.
+
+<Tip>
+  Use the global prompt for personality, tone, and rules that apply everywhere. Use step prompts for step-specific instructions like "Ask for the caller's name" or "Confirm the appointment details."
+</Tip>
 
 ## Best Practices
 
 <AccordionGroup>
   <Accordion title="Keep workflows linear when possible">
-    Complex branching is powerful but harder to debug. Start with a linear flow and add branches only where needed.
+    Complex branching is powerful but harder to debug. Start with a linear flow (Start → Step 1 → Step 2 → End) and add branches only where the conversation genuinely needs to diverge.
   </Accordion>
   <Accordion title="Test every path">
-    Make test calls that exercise each branch. Untested paths are where bugs hide.
+    Make test calls that exercise each branch. Untested paths are where bugs hide. Pay special attention to edge cases and fallback routes.
   </Accordion>
   <Accordion title="Use clear node names">
-    Name your nodes descriptively (e.g. "Collect Name", "Qualify Interest") so the workflow is readable at a glance.
+    Name your nodes descriptively (e.g. "Collect Name", "Qualify Interest", "Book Appointment") so the workflow is readable at a glance.
+  </Accordion>
+  <Accordion title="Always have a fallback">
+    Add a catch-all path from condition nodes that handles unexpected responses. Don't leave the caller in a dead-end.
+  </Accordion>
+  <Accordion title="Keep steps short">
+    Each conversation step should have one clear goal (ask one question, confirm one piece of information). Long, multi-part steps confuse both the LLM and the caller.
   </Accordion>
 </AccordionGroup>

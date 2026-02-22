@@ -5,44 +5,78 @@ description: "Feed your agents structured content for accurate, context-aware re
 
 # Knowledge Base
 
-The Knowledge Base allows you to provide your agents with domain-specific information. During a conversation, the agent automatically retrieves the most relevant content to answer caller questions accurately.
+The Knowledge Base allows you to provide your agents with domain-specific information. During a conversation, the agent automatically retrieves the most relevant content to answer caller questions accurately — instead of relying on the LLM's general training data.
 
-## How It Works
+## How It Works (RAG)
 
-1. You create knowledge items containing text content
-2. The content is split into chunks and embedded as vectors
-3. During a call, the agent's question is matched against these vectors
-4. The most relevant chunks are injected into the LLM context
+Callem Studio uses **Retrieval-Augmented Generation (RAG)** to give your agent real-time access to your data:
 
-This is called **Retrieval-Augmented Generation (RAG)** — it ensures your agent answers based on your data, not just general knowledge.
+<Steps>
+  <Step title="Content ingestion">
+    When you create a knowledge item, the text is split into chunks and each chunk is converted into a vector embedding using Azure OpenAI embeddings.
+  </Step>
+  <Step title="Vector storage">
+    Embeddings are stored in MongoDB Atlas Vector Search for fast similarity matching.
+  </Step>
+  <Step title="Real-time retrieval">
+    During a call, the caller's question is also converted into a vector. The system finds the most similar chunks from your knowledge base.
+  </Step>
+  <Step title="Context injection">
+    The retrieved chunks are injected into the LLM's context alongside the system prompt, giving the agent accurate, up-to-date information to answer with.
+  </Step>
+</Steps>
 
 ## Creating a Knowledge Item
 
 1. Navigate to **Build > Knowledge Base**
 2. Click **Add**
 3. Fill in:
-   - **Name**: a descriptive label (e.g. "Product Catalog Q3 2025")
-   - **Description**: optional summary of the content
-   - **Content**: the text your agent should know
+   - **Name**: a descriptive label (e.g. "Product Catalog Q3 2025", "FAQ - Returns Policy")
+   - **Description**: optional summary explaining what the content covers
+   - **Content**: the actual text your agent should know
+
+## Linking to an Agent
+
+Once created, you need to link the knowledge base to your agent:
+
+1. Go to **Build > Agents** and select your agent
+2. Open the **Model** tab → **Knowledge & Tools** section
+3. Select one or more knowledge bases from the dropdown
+4. (Optional) Adjust **Retrieval Settings**
+
+### Retrieval Settings
+
+Fine-tune how the agent retrieves content:
+
+| Setting | Description | Default | Guidance |
+|---------|-------------|---------|----------|
+| **Max documents** | Maximum text chunks retrieved per query (1-10) | `6` | More chunks = more context but higher token usage. Start with 4-6 and increase if the agent frequently lacks information. |
+| **Relevance threshold** | Minimum similarity score (0.0-1.0) for a chunk to be included | `0.6` | Higher = stricter matching, fewer but more relevant results. Lower = more results but may include loosely related content. |
 
 <Tip>
-  Structure your content with headings (`## Section Title`) to help the chunking algorithm split it into meaningful sections.
+  If the agent frequently answers "I don't have that information" when the data exists in your knowledge base, try **lowering** the relevance threshold or **increasing** max documents.
 </Tip>
 
 ## Content Guidelines
 
 <AccordionGroup>
   <Accordion title="Use clear, factual language">
-    Write content as you'd want the agent to say it. Avoid internal jargon unless the agent should use it with callers.
+    Write content as you'd want the agent to say it. Avoid internal jargon unless the agent should use it with callers. The LLM will rephrase as needed, but clear source text gives better results.
   </Accordion>
   <Accordion title="Organize with headings">
-    Use `## Heading` to separate topics. Each heading creates a natural chunk boundary, improving retrieval accuracy.
+    Use `## Heading` to separate topics. Each heading creates a natural chunk boundary, improving retrieval accuracy. Don't put unrelated information under the same heading.
   </Accordion>
   <Accordion title="Keep items focused">
-    One knowledge item per topic or document. Don't dump everything into a single item — smaller, focused items retrieve better.
+    One knowledge item per topic or document. A "Business Hours" item and a "Pricing" item will retrieve better than a single "Everything About Our Company" item.
+  </Accordion>
+  <Accordion title="Be specific with numbers and details">
+    Instead of "Our service is affordable", write "Our Standard plan costs €49/month, Professional is €99/month." The agent can only relay information it has.
+  </Accordion>
+  <Accordion title="Include Q&A pairs">
+    Adding common questions and their answers helps the retrieval engine match caller questions to relevant content. Example: "**Q: What are your hours?** A: We are open Monday to Friday, 9am to 6pm."
   </Accordion>
   <Accordion title="Update regularly">
-    Outdated knowledge leads to wrong answers. Delete and recreate items when the underlying information changes.
+    Outdated knowledge leads to wrong answers and erodes caller trust. Delete and recreate items when the underlying information changes — pricing, availability, policies, etc.
   </Accordion>
 </AccordionGroup>
 
@@ -52,22 +86,44 @@ This is called **Retrieval-Augmented Generation (RAG)** — it ensures your agen
 ## Business Hours
 We are open Monday to Friday, 9am to 6pm.
 Saturday from 10am to 2pm. Closed on Sundays and public holidays.
+Holiday closures: December 25, January 1, May 1.
 
 ## Return Policy
 Items can be returned within 30 days of purchase with original receipt.
-Refunds are processed within 5-7 business days.
+Refunds are processed within 5-7 business days to the original payment method.
 Sale items are final sale and cannot be returned.
+Exchange is available in-store within 14 days.
 
 ## Pricing
-- Standard plan: €49/month
-- Professional plan: €99/month
-- Enterprise: contact sales for custom pricing
+- Standard plan: €49/month — up to 500 calls/month, 1 agent
+- Professional plan: €99/month — up to 2,000 calls/month, 5 agents
+- Enterprise: contact sales at sales@acme.com for custom pricing
+All plans include a 14-day free trial with no credit card required.
+
+## Frequently Asked Questions
+Q: Can I upgrade my plan mid-month?
+A: Yes, upgrades are prorated. You only pay the difference for the remaining days.
+
+Q: Do you offer annual billing?
+A: Yes, annual billing gives you 2 months free (pay for 10, get 12).
 ```
 
-## Linking to an Agent
+## Multiple Knowledge Bases
 
-Once created, attach the knowledge base to your agent in the agent configuration page. The agent will automatically use it during conversations.
+You can link **multiple knowledge bases** to a single agent. The retrieval system searches across all linked knowledge bases simultaneously and returns the most relevant chunks regardless of which knowledge base they belong to.
+
+**Common patterns:**
+- **Product catalog** + **FAQ** + **Policy documents** — different types of content, all accessible
+- **Language-specific** — separate knowledge bases per language
+- **Temporal** — archive old content in a separate KB, keep current content in the primary one
 
 ## API Access
 
-Knowledge base items can also be managed programmatically via the [Public API](/api-reference/knowledge/list-knowledge).
+Knowledge base items can be managed programmatically via the [Public API](/api-reference/knowledge/list-knowledge):
+
+- `GET /v1/knowledge` — list all items
+- `GET /v1/knowledge/:id` — get a specific item
+- `POST /v1/knowledge` — create a new item (automatically vectorized)
+- `DELETE /v1/knowledge/:id` — delete an item
+
+This is useful for integrating with CMS systems, automated content pipelines, or keeping your knowledge base in sync with external data sources.

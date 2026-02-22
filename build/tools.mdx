@@ -5,59 +5,88 @@ description: "Define custom functions and API integrations your agents can invok
 
 # Tools
 
-Tools extend your agent's capabilities beyond conversation. They allow the agent to perform real actions during a call — like booking appointments, looking up customer records, or triggering webhooks.
+Tools extend your agent's capabilities beyond conversation. They allow the agent to perform real actions during a call — like booking appointments, looking up customer records, checking inventory, or triggering webhooks.
 
 ## How Tools Work
 
-1. You define a tool with a name, description, and expected parameters
-2. The tool is attached to an agent
-3. During a call, the LLM decides when to invoke a tool based on the conversation context
-4. The tool executes (API call, webhook, etc.) and the result is fed back to the agent
-5. The agent uses the result to continue the conversation
+Tools leverage the **function calling** capability of modern LLMs:
 
-This is also known as **function calling** — a capability of modern LLMs.
+<Steps>
+  <Step title="Define the tool">
+    Create a tool with a name, description, parameters (JSON Schema), and an API endpoint.
+  </Step>
+  <Step title="Attach to an agent">
+    Link the tool to one or more agents via the Model tab → Knowledge & Tools section.
+  </Step>
+  <Step title="LLM decides when to call">
+    During a call, the LLM analyzes the conversation and determines when a tool invocation is appropriate based on its description and the caller's intent.
+  </Step>
+  <Step title="Execution">
+    The system calls your API endpoint with the extracted parameters. Your endpoint processes the request and returns a result.
+  </Step>
+  <Step title="Response integration">
+    The tool's response is fed back to the LLM, which uses it to continue the conversation naturally (e.g. "I've booked your appointment for Tuesday at 3pm").
+  </Step>
+</Steps>
 
 ## Creating a Tool
 
 1. Navigate to **Build > Tools**
 2. Click **New Tool**
-3. Configure:
-   - **Name**: a clear function name (e.g. `check_availability`)
-   - **Description**: explain what this tool does — the LLM reads this to decide when to use it
-   - **Parameters**: define the inputs the tool expects (JSON Schema format)
-   - **Endpoint**: the URL to call when the tool is invoked
+3. Configure the tool settings (see below)
 
 ## Tool Configuration
 
-| Field | Description |
-|-------|-------------|
-| Name | Function name the LLM will reference |
-| Description | When and why to use this tool (crucial for accuracy) |
-| Parameters | JSON Schema defining expected inputs |
-| Endpoint URL | HTTP endpoint called with the parameters |
-| Method | HTTP method (GET, POST, etc.) |
-| Headers | Custom headers (e.g. API keys) |
+| Field | Description | Tips |
+|-------|-------------|------|
+| **Name** | Function name the LLM will reference | Use `snake_case` (e.g. `book_appointment`, `check_stock`). Keep it descriptive but concise. |
+| **Description** | Explains when and why to use this tool | This is the most important field — the LLM reads it to decide when to invoke the tool. Be explicit about trigger conditions. |
+| **Parameters** | JSON Schema defining expected inputs | Define every parameter with a type and description. Mark required fields. |
+| **Endpoint URL** | HTTP endpoint called with the parameters | Must be publicly accessible. Use HTTPS for security. |
+| **Method** | HTTP method (GET, POST, etc.) | POST is recommended for actions, GET for lookups. |
+| **Headers** | Custom headers (e.g. authorization tokens) | Include API keys or auth tokens needed by your endpoint. |
+
+### Writing Effective Descriptions
+
+The tool description is critical — it tells the LLM **when** to use the tool. Poor descriptions lead to missed invocations or false triggers.
+
+**Bad description:**
+> "Handles appointments"
+
+**Good description:**
+> "Book a new appointment for the caller. Use this tool ONLY when the caller has explicitly confirmed they want to schedule a visit and has provided their name, preferred date, and time. Do NOT use this tool for general questions about availability."
+
+### Parameter Definition (JSON Schema)
+
+Parameters use [JSON Schema](https://json-schema.org/) format. Each parameter needs:
+
+- `type` — data type (`string`, `number`, `boolean`, `object`, `array`)
+- `description` — what this parameter represents (the LLM reads this to extract the right value from the conversation)
 
 ## Example: Appointment Booking Tool
 
 ```json
 {
   "name": "book_appointment",
-  "description": "Book an appointment for the caller. Use when the caller explicitly requests to schedule a visit.",
+  "description": "Book an appointment for the caller. Use when the caller explicitly requests to schedule a visit and has provided their name, preferred date, and preferred time.",
   "parameters": {
     "type": "object",
     "properties": {
       "caller_name": {
         "type": "string",
-        "description": "Full name of the caller"
+        "description": "Full name of the caller as stated during the conversation"
       },
       "date": {
         "type": "string",
-        "description": "Requested date in YYYY-MM-DD format"
+        "description": "Requested appointment date in YYYY-MM-DD format"
       },
       "time": {
         "type": "string",
-        "description": "Requested time in HH:MM format"
+        "description": "Requested appointment time in HH:MM format (24-hour)"
+      },
+      "reason": {
+        "type": "string",
+        "description": "Brief reason for the appointment"
       }
     },
     "required": ["caller_name", "date", "time"]
@@ -65,19 +94,61 @@ This is also known as **function calling** — a capability of modern LLMs.
 }
 ```
 
+## Example: CRM Lookup Tool
+
+```json
+{
+  "name": "lookup_customer",
+  "description": "Look up a customer record in the CRM by phone number. Use this tool at the start of the call to check if the caller is an existing customer and personalize the conversation.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "phone_number": {
+        "type": "string",
+        "description": "Caller's phone number in international format (e.g. +33612345678)"
+      }
+    },
+    "required": ["phone_number"]
+  }
+}
+```
+
+## Linking Tools to an Agent
+
+You can attach tools to agents in two ways:
+
+1. **From the Agent's Model tab** → Knowledge & Tools section → select tools from the dropdown
+2. **From the Tools page** → manage which agents use each tool
+
+Tools can be shared across multiple agents.
+
+## Tool Invocation During Calls
+
+When a tool is invoked during a call, you can see it in:
+
+- **Chat sidebar** (test mode) — shows tool name, input parameters, and output
+- **Call transcript** (call detail view) — logged as part of the conversation flow
+- **Observability** (if configured) — traced in Langfuse/Langsmith for debugging
+
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="Write precise descriptions">
-    The LLM uses the tool description to decide when to call it. A vague description leads to incorrect or missed invocations. Be specific about trigger conditions.
+  <Accordion title="Write precise, condition-specific descriptions">
+    The LLM uses the tool description to decide when to call it. Include explicit trigger conditions and counter-conditions. For example: "Use when X. Do NOT use when Y."
+  </Accordion>
+  <Accordion title="Return human-readable responses">
+    Your API endpoint should return clear messages the agent can relay to the caller. Instead of `{"status": 200, "id": "apt_123"}`, return `{"message": "Appointment confirmed for Tuesday March 15 at 3:00 PM. Confirmation number: APT-123."}`.
   </Accordion>
   <Accordion title="Handle errors gracefully">
-    Your API endpoint should return clear error messages. The agent will relay these to the caller, so make them human-readable.
+    Return meaningful error messages. The agent will relay these to the caller. Example: `{"error": "No available slots on that date. Please suggest an alternative."}`.
   </Accordion>
-  <Accordion title="Keep tools focused">
-    One tool = one action. Don't create a "do everything" tool. Split complex workflows into multiple tools with clear responsibilities.
+  <Accordion title="One tool = one action">
+    Don't create a "do everything" tool. Split complex workflows into multiple tools with clear responsibilities. The LLM handles orchestration between tools naturally.
+  </Accordion>
+  <Accordion title="Validate inputs server-side">
+    Don't trust the LLM to always extract parameters perfectly. Validate all inputs in your API endpoint and return clear error messages if something is missing or malformed.
   </Accordion>
   <Accordion title="Test with real scenarios">
-    Call your agent and try to trigger each tool. Verify the parameters are passed correctly and the response is used appropriately.
+    Call your agent and try to trigger each tool. Verify the parameters are passed correctly and the response is used appropriately in the conversation.
   </Accordion>
 </AccordionGroup>

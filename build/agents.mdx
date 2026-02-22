@@ -5,24 +5,41 @@ description: "Create and configure AI voice agents with custom prompts, voices, 
 
 # Agents
 
-Agents are the core building block of Callem Studio. An agent is an AI-powered voice assistant configured with a system prompt, a voice, a language model, and optional integrations like knowledge bases and tools.
+Agents are the core building block of Callem Studio. An agent is an AI-powered voice assistant configured with a system prompt, a voice, a language model, and optional integrations. The agent configuration is split across multiple tabs, each controlling a different aspect of its behavior.
 
 ## Creating an Agent
 
-1. Navigate to **Build > Agents** in the sidebar
-2. Click **New Agent**
-3. Give your agent a descriptive name
+1. Navigate to **Build > Agents**
+2. Click **New Agent** (for prompt-based) or **New Workflow Agent** (for flow-based)
+3. Name your agent and start configuring
 
-## Agent Configuration
+## Agent Tabs
 
-Each agent is defined by an **Agent Configuration** that controls its behavior:
+Each agent has the following configuration tabs:
+
+| Tab | Purpose |
+|-----|---------|
+| **Model** | System prompt, LLM provider/model, temperature, knowledge bases, tools |
+| **Voice** | TTS voice selection, STT configuration, VAD, interruptions, background sound |
+| **Call Analysis** | Post-call analysis fields and prompt |
+| **Advanced** | Safety features, privacy, voicemail detection, observability |
+
+---
+
+## Model Tab
+
+The Model tab controls the agent's "brain" — what it says, how it reasons, and what data it has access to.
+
+### Welcome Message
+
+The first thing the agent says when a call begins. Leave empty for the agent to wait for the caller to speak first.
 
 ### System Prompt
 
-The system prompt is the most important part of your agent. It defines the agent's personality, role, instructions, and boundaries.
+The most critical configuration. It defines the agent's identity, instructions, tone, and boundaries.
 
 <Tip>
-  Write your system prompt as if you were briefing a real employee. Be specific about what the agent should do, how it should respond, and what it should avoid.
+  Write your system prompt as if you were briefing a real employee. Be specific about scenarios, responses, and what the agent should avoid. The more precise you are, the more reliable the agent's behavior will be.
 </Tip>
 
 ```text Example System Prompt
@@ -33,82 +50,203 @@ and answer questions about our services.
 Rules:
 - Always greet the caller warmly
 - Ask for their name and reason for calling
-- If they want an appointment, check availability
+- If they want an appointment, use the book_appointment tool
 - Never provide medical advice
 - If unsure, offer to transfer to the office manager
 ```
 
-### Voice (TTS)
+### LLM Configuration
 
-Choose a text-to-speech voice from supported providers:
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| **Provider** | The LLM provider (e.g. OpenAI, Anthropic, Azure) | — |
+| **Model** | Specific model version (e.g. gpt-4o, gpt-4o-mini) | — |
+| **Temperature** | Controls response randomness. `0` = deterministic, `1` = creative. Lower values are recommended for consistent voice agents. | `0.7` |
+| **Max Tokens** | Maximum number of tokens the LLM can generate per response. Higher values allow longer answers but increase latency and cost. | `1024` |
 
-| Provider | Voices | Highlights |
-|----------|--------|------------|
-| **ElevenLabs** | 100+ | Natural-sounding, multilingual, custom cloning |
-| **Azure** | 400+ | Wide language coverage, low latency |
-
-You can configure additional TTS settings like model selection depending on the provider.
-
-### Speech-to-Text (STT)
-
-Select the transcription engine for understanding caller speech:
-
-- **Deepgram** — fast, accurate, supports multiple languages
-- **Azure Speech** — enterprise-grade, wide language support
-
-### Language Model (LLM)
-
-Pick the underlying AI model that powers your agent's reasoning:
-
-- GPT-4o, GPT-4o-mini
-- Claude 3.5 Sonnet
-- Gemini
-- And more, depending on your configuration
-
-### Language
-
-Set the primary language for your agent. This affects STT transcription, TTS output, and prompt behavior.
-
-### Background Sound
-
-Add ambient background audio to make calls feel more natural (e.g. call center ambiance). You can:
-
-- Enable/disable the background sound
-- Choose from a library of pre-configured sounds
-- Adjust the volume level
+<Info>
+  For voice agents, a temperature between **0.3 and 0.5** usually gives the best balance between natural-sounding and reliable responses. Higher values can cause the agent to go off-script.
+</Info>
 
 ### Knowledge Base
 
-Attach one or more knowledge bases to give your agent access to domain-specific information. The agent will automatically retrieve relevant content during conversations.
+Link one or more knowledge bases to give the agent access to domain-specific content. When a caller asks a question, the agent retrieves the most relevant content from the linked knowledge bases and uses it to answer.
+
+**Retrieval Settings** (available when at least one knowledge base is linked):
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Max documents** | Maximum number of text chunks to retrieve per query (1-10). Higher = more context but more tokens. | `6` |
+| **Relevance threshold** | Minimum similarity score (0-1) for a chunk to be included. Higher = fewer but more relevant matches. | `0.6` |
 
 ### Tools
 
-Assign tools (custom functions) that your agent can invoke during a call — like booking appointments, checking order status, or transferring the call.
+Link tools (custom functions) that the agent can invoke during a call. When the LLM determines that a tool should be called based on the conversation context, it passes the extracted parameters to the tool's endpoint and uses the result to continue the conversation.
 
-## Agent Settings Summary
+---
+
+## Voice Tab
+
+The Voice tab controls how the agent sounds and how it processes caller speech.
+
+### Text-to-Speech (TTS)
+
+Choose the voice the agent uses to speak. The available voices are loaded dynamically from configured providers. You can filter voices by language, gender, and provider.
+
+Some voices offer additional settings (like model selection) that appear automatically when relevant.
+
+### Speech-to-Text (STT)
+
+Configure how caller speech is transcribed:
 
 | Setting | Description |
 |---------|-------------|
-| Name | Display name for the agent |
-| System Prompt | Instructions that define agent behavior |
-| Voice | TTS voice provider and voice selection |
-| STT | Speech-to-text engine |
-| LLM | Language model powering responses |
-| Language | Primary conversation language |
-| Background Sound | Ambient audio during calls |
-| Knowledge Base | Attached knowledge sources |
-| Tools | Functions the agent can call |
+| **Provider** | The STT engine used for transcription |
+| **Language** | Primary language for transcription accuracy |
+
+### Voice Activity Detection (Semantic VAD)
+
+Semantic VAD uses the LLM to determine when the caller has finished speaking, rather than relying solely on silence detection. This produces more natural conversations, especially when callers pause mid-sentence.
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Enabled** | Toggle semantic VAD on/off | Off |
+| **Config** | Additional VAD configuration parameters | — |
+
+<Tip>
+  Enable Semantic VAD for complex conversations where callers may pause to think. Disable it for simple, fast-paced interactions (e.g. appointment confirmations) where silence-based detection is sufficient.
+</Tip>
+
+### End of Speech Threshold
+
+The silence duration (in milliseconds) before the system considers the caller has finished speaking. Lower values make the agent more responsive but may cut the caller off. Higher values are more patient but introduce latency.
+
+| Value | Behavior |
+|-------|----------|
+| **200-400ms** | Very responsive, risks interrupting pauses |
+| **500-800ms** | Good balance for most use cases |
+| **1000ms+** | Very patient, best for elderly callers or complex topics |
+
+### Interruption Config
+
+Controls whether and how the caller can interrupt the agent while it's speaking.
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Enabled** | Allow caller to interrupt the agent | Off |
+| **Minimum words** | Minimum words the caller must say before the interruption is registered | `3` |
+| **Minimum duration** | Minimum duration (ms) of caller speech before interruption triggers | `15` |
+
+### Reminder Message
+
+Time in seconds before the agent sends a reminder message if the caller remains silent. Set to `0` to disable.
+
+### Voice Speed
+
+Adjust the speaking speed of the agent's voice. `1.0` is normal speed.
+
+### Background Sound
+
+Add ambient background audio to make calls feel more natural (e.g. office ambiance, call center sounds).
+
+| Setting | Description |
+|---------|-------------|
+| **Enabled** | Toggle background sound on/off |
+| **Sound** | Select from a library of pre-configured ambient sounds |
+| **Volume** | Adjust the volume level (0-100%) |
+
+---
+
+## Call Analysis Tab
+
+Call Analysis is a **post-call processing** feature that uses an LLM to extract structured data from call transcripts after the call ends. This is useful for automatically categorizing calls, extracting key information, and feeding data into your analytics dashboards.
+
+### How It Works
+
+1. After a call ends, the full transcript is sent to an LLM along with your analysis prompt
+2. The LLM extracts the requested fields based on the prompt and field definitions
+3. The extracted data is stored as `callAnalysis` on the call record
+4. This data can be used in analytics charts, alert rules, and API responses
+
+### Analysis Fields
+
+Define the fields you want to extract from each call. Each field has a type:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Text** | Free-form text extraction | Summary, key takeaways, caller concerns |
+| **Selector** | One value from a predefined list | Sentiment (`positive`, `neutral`, `negative`), Lead quality (`hot`, `warm`, `cold`) |
+| **Number** | Numeric value extraction | NPS score, satisfaction rating (1-5) |
+| **Boolean** | True/false determination | Appointment booked, issue resolved, callback requested |
+
+<Warning>
+  Field names cannot be changed after creation because they serve as identifiers in dashboards, filters, and alert rules. Choose descriptive, stable names.
+</Warning>
+
+### Analysis Prompt
+
+A custom prompt sent to the LLM along with the call transcript. Use it to give the LLM context about your business and instructions on how to analyze each field.
+
+### Minimum Duration
+
+Calls shorter than this duration (in seconds) will not be analyzed. This avoids wasting LLM calls on hang-ups, wrong numbers, or very short interactions.
+
+---
+
+## Advanced Tab
+
+### LLM Safety Features
+
+| Feature | Description |
+|---------|-------------|
+| **Guardrails** | Enables safety filters on LLM responses to prevent harmful, inappropriate, or off-topic content |
+
+### Privacy
+
+| Feature | Description |
+|---------|-------------|
+| **Anonymization** | Automatically anonymizes personal data (names, phone numbers, addresses) in stored conversations |
+
+### Voice Mail Detection
+
+Automatically detects when a call reaches a voicemail or IVR system and hangs up to avoid wasting resources.
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Enabled** | Toggle voicemail detection on/off | Off |
+| **Initial detection delay** | Seconds to wait before first detection attempt | `5` |
+| **Detection retry interval** | Seconds between each detection retry | `5` |
+| **Max detection retries** | Maximum number of detection attempts before giving up | `60` |
+
+### Observability
+
+Connect external observability platforms to trace and debug your agent's LLM interactions:
+
+| Provider | Fields |
+|----------|--------|
+| **Langfuse** | Public Key, Secret Key, Base URL |
+| **Langsmith** | API URL, API Key |
+
+This sends all LLM calls (prompts, responses, tool calls) to your observability platform for detailed tracing and debugging.
+
+---
 
 ## Best Practices
 
 <AccordionGroup>
   <Accordion title="Write specific, actionable prompts">
-    Vague prompts like "be helpful" lead to inconsistent behavior. Instead, describe exact scenarios: "When a caller asks about pricing, quote from the attached knowledge base."
+    Vague prompts like "be helpful" lead to inconsistent behavior. Describe exact scenarios: "When a caller asks about pricing, quote from the attached knowledge base. Never invent prices."
+  </Accordion>
+  <Accordion title="Lower the temperature for production agents">
+    A temperature of 0.3-0.5 gives reliable, consistent responses. Only use higher values for creative or exploratory use cases.
+  </Accordion>
+  <Accordion title="Use call analysis to measure quality">
+    Define analysis fields like `sentiment`, `issueResolved`, and `callbackRequested` to automatically track call quality at scale.
   </Accordion>
   <Accordion title="Test with real conversations">
-    After configuring your agent, call the assigned phone number yourself. Listen for unnatural pauses, incorrect responses, or missed instructions.
+    After configuring your agent, call the assigned phone number yourself. Listen for unnatural pauses, incorrect responses, or missed instructions. Use the built-in chat or webcall features for faster iteration.
   </Accordion>
   <Accordion title="Start simple, iterate">
-    Begin with a minimal prompt and a single knowledge base. Add tools and complexity once the basic flow works well.
+    Begin with a minimal prompt and a single knowledge base. Add tools, analysis fields, and advanced settings once the basic flow works well.
   </Accordion>
 </AccordionGroup>

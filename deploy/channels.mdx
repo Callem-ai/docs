@@ -9,45 +9,60 @@ Channels are the bridge between your AI agents and the real world. Configure pho
 
 ## Overview
 
-Each channel represents a phone number or SIP endpoint linked to an agent. When a call arrives on that number, the assigned agent picks up and begins the conversation.
+Each channel represents a phone number or SIP endpoint linked to an agent. When a call arrives on that number, the assigned agent picks up and begins the conversation automatically.
 
 ## Phone Number Configuration
 
 ### Assigning an Agent
 
-1. Navigate to **Deploy > Channels**
-2. Select a phone number from the list
-3. Choose the agent that should handle calls on this number
-4. Save the configuration
+<Steps>
+  <Step title="Navigate to Channels">
+    Go to **Deploy > Channels** to see all available phone numbers.
+  </Step>
+  <Step title="Select a number">
+    Click on the phone number you want to configure.
+  </Step>
+  <Step title="Assign an agent">
+    Choose the agent (single-prompt or workflow) that should handle calls on this number.
+  </Step>
+  <Step title="Save">
+    Save the configuration. Incoming calls to this number will now be handled by the assigned agent.
+  </Step>
+</Steps>
 
 ### Supported Features
 
 | Feature | Description |
 |---------|-------------|
-| **Inbound calls** | Receive calls — the assigned agent answers automatically |
-| **Outbound calls** | Place calls using this number as the caller ID |
-| **SIP trunking** | Connect your existing telephony infrastructure via SIP |
+| **Inbound calls** | Receive calls — the assigned agent answers automatically with the configured welcome message |
+| **Outbound calls** | Place calls using this number as the caller ID (used by campaigns) |
+| **SIP trunking** | Connect your existing telephony infrastructure via SIP protocol |
 | **Number import** | Bring your own phone number from another provider |
 
 ## SIP Configuration
 
 For enterprises with existing telephony setups, Callem Studio supports SIP trunk integration:
 
-- **SIP URI**: your Callem SIP endpoint for routing
-- **Authentication**: credentials or IP-based allowlisting
-- **Codec support**: G.711 (PCMU/PCMA), Opus
+| Setting | Description |
+|---------|-------------|
+| **SIP URI** | Your Callem SIP endpoint for routing calls |
+| **Authentication** | Credentials-based or IP-based allowlisting |
+| **Codec support** | G.711 (PCMU/PCMA), Opus |
 
 <Info>
-  Contact support at **contact@callem.ai** for assistance with custom SIP configurations.
+  Contact support at **contact@callem.ai** for assistance with custom SIP configurations, number porting, or multi-region deployments.
 </Info>
 
 ## Multi-Number Setup
 
-You can assign the same agent to multiple numbers, or different agents to different numbers. This allows scenarios like:
+You can assign the same agent to multiple numbers, or different agents to different numbers:
 
-- **Language routing**: French number → French agent, English number → English agent
-- **Department routing**: Sales number → Sales agent, Support number → Support agent
-- **Geographic routing**: different numbers for different regions, all handled by specialized agents
+| Pattern | Example |
+|---------|---------|
+| **Language routing** | French number → French agent, English number → English agent |
+| **Department routing** | Sales number → Sales agent, Support number → Support agent |
+| **Geographic routing** | Regional numbers → location-specific agents |
+| **Overflow** | Primary + backup number → same agent for high availability |
 
 ## Best Practices
 
@@ -55,7 +70,10 @@ You can assign the same agent to multiple numbers, or different agents to differ
   <Accordion title="Test before going live">
     Always call your configured number from a personal phone to verify the agent responds correctly before publishing the number publicly.
   </Accordion>
-  <Accordion title="Monitor call quality">
-    After deployment, check the **Monitor > Calls** section regularly for dropped calls, poor transcription, or unexpected agent behavior.
+  <Accordion title="Monitor call quality after deployment">
+    After deployment, check **Monitor > Calls** regularly for dropped calls, poor transcription, or unexpected agent behavior.
+  </Accordion>
+  <Accordion title="Use dedicated numbers per use case">
+    Separating sales from support at the phone number level makes analytics cleaner and allows you to assign specialized agents to each function.
   </Accordion>
 </AccordionGroup>
