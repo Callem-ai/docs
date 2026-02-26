@@ -74,7 +74,7 @@ The built-in overview dashboard provides two rows of KPI cards and six default c
 | **Concurrency** | Line | Simultaneous active calls/chats per minute/hour throughout the day |
 | **Hourly Distribution** | Bar | Call distribution across 24 hours — identify peak hours |
 | **Day of Week Distribution** | Bar | Call distribution across 7 days — identify peak days |
-| **KPI Evolution** | Multi-line | Engagement rate, Transfer rate, and AHT trends over time |
+| **KPI Evolution** | Multi-line | Engagement rate / Transfer rate / AHT trends over time |
 | **Latency Evolution** | Multi-line | LLM / TTS / Global latency trends over time |
 
 ### Per-Agent Table
@@ -179,7 +179,7 @@ Each chart can have its own independent filters (in addition to the global page 
 
 | Filter Category | Fields |
 |----------------|--------|
-| **Call fields** | Duration, isEngaged, endedReason, callerNum, calledNum, totalInteraction |
+| **Call fields** | Duration / isEngaged / endedReason / callerNum / calledNum / totalInteraction |
 | **Agent** | Filter by specific agent(s) |
 | **Call Analysis** | Any custom analysis field defined on your agents |
 
@@ -189,10 +189,10 @@ Operators vary by field type:
 
 | Field Type | Available Operators |
 |-----------|---------------------|
-| **Number** | =, !=, >, >=, <, <=, Exists |
-| **Boolean** | =, Exists |
-| **String** | Equals, Not equals, Contains, Exists |
-| **Selector** | Equals, Not equals, Exists |
+| **Number** | equals / not equals / greater than / greater-or-equal / less than / less-or-equal / Exists |
+| **Boolean** | equals / Exists |
+| **String** | Equals / Not equals / Contains / Exists |
+| **Selector** | Equals / Not equals / Exists |
 
 Multiple filters can be combined with **AND** or **OR** logic.
 
@@ -229,6 +229,6 @@ The chart editor shows a live preview that updates as you change settings, so yo
     Global filters (date, agent, channel) apply to all charts. Use per-chart filters for specific slices — e.g. a chart showing only calls where `endedReason = transfer`.
   </Accordion>
   <Accordion title="Use the channel filter for channel-specific views">
-    To compare or isolate performance by channel, use the **Channel** filter: select only **Voice** for phone metrics, only **Chat** for web widget metrics, or both for combined conversation metrics. Custom dashboard charts respect the same channel selection.
+    To compare or isolate performance by channel, use the **Channel** filter: select **Voice** for phone metrics and **Chat** for web widget metrics, or both for combined conversation metrics. Custom dashboard charts respect the same channel selection.
   </Accordion>
 </AccordionGroup>
