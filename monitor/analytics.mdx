@@ -16,10 +16,10 @@ Analytics aggregates data from **multiple channels**. Today the platform support
 | **Voice** | Phone calls handled by the voice gateway (SIP / telephony) |
 | **Chat** | Text conversations from the web widget or test chat in Callem Studio |
 
-You can view metrics for **Voice only**, **Chat only**, or **both** (combined). The channel selector is a multi-select dropdown at the top of the page. Labels and KPIs adapt: for example, "Total Calls" becomes "Total Chats" when only Chat is selected, or "Total Conversations" when both channels are selected. Additional channels (e.g. WhatsApp, social networks) are planned; the filter is designed to scale as new channels are added.
+You can view metrics for **Voice only**, **Chat only**, or **both** (combined). The channel selector is a multi-select dropdown at the top of the page. Labels and KPIs adapt: for example, "Total Calls" becomes "Total Chats" when only Chat is selected, or "Total Conversations" when both channels are selected. Additional channels (e.g. WhatsApp and social networks) are planned; the filter is designed to scale as new channels are added.
 
 <Info>
-  Latency KPIs (LLM, TTS, Global) are primarily relevant for Voice; chat sessions may show zero or partial TTS latency. Engagement, transfer rate, duration, and call analysis apply to both channels where applicable.
+  Latency KPIs (LLM / TTS / Global) are primarily relevant for Voice; chat sessions may show zero or partial TTS latency. Engagement, transfer rate, duration, and call analysis apply to both channels where applicable.
 </Info>
 
 ## Filters
@@ -31,7 +31,7 @@ All analytics data is filtered by the controls at the top of the page:
 | **Date range** | Select the time period to analyze |
 | **Duration** | Filter by conversation duration range (min/max in seconds) |
 | **Agent** | Multi-select to filter by specific agents |
-| **Channel** | Multi-select: Voice, Chat (or both). Future channels will appear here. |
+| **Channel** | Multi-select: Voice and Chat (or both). Future channels will appear here. |
 | **Call Analysis** | Filter by custom analysis field values (e.g. `sentiment = positive`) |
 
 All KPIs and charts update dynamically when filters change.
@@ -75,7 +75,7 @@ The built-in overview dashboard provides two rows of KPI cards and six default c
 | **Hourly Distribution** | Bar | Call distribution across 24 hours — identify peak hours |
 | **Day of Week Distribution** | Bar | Call distribution across 7 days — identify peak days |
 | **KPI Evolution** | Multi-line | Engagement rate, Transfer rate, and AHT trends over time |
-| **Latency Evolution** | Multi-line | LLM, TTS, and Global latency trends over time |
+| **Latency Evolution** | Multi-line | LLM / TTS / Global latency trends over time |
 
 ### Per-Agent Table
 
@@ -198,7 +198,7 @@ Multiple filters can be combined with **AND** or **OR** logic.
 
 ### Time Granularity
 
-For time-series charts (Column, Line, Bar), choose the aggregation granularity:
+For time-series charts (Column / Line / Bar), choose the aggregation granularity:
 
 | Granularity | Use Case |
 |-------------|----------|
