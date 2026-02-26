@@ -1,17 +1,24 @@
 ---
 title: "Channels"
-description: "Connect your agents to phone numbers and configure telephony routing."
+description: "Connect your agents to voice (phone) and chat (web) channels; configure telephony and widget routing."
 ---
 
 # Channels
 
-Channels are the bridge between your AI agents and the real world. Configure phone numbers, SIP trunks, and routing rules to handle inbound and outbound calls.
+Channels are the bridge between your AI agents and users. Callem Studio is **multichannel**: the same agents can handle **voice** (phone) and **chat** (web widget) conversations. Additional channels (e.g. WhatsApp, social networks) are on the roadmap.
+
+| Channel | Description |
+|---------|-------------|
+| **Voice** | Phone calls via SIP/telephony; configured with phone numbers and routing (see below). |
+| **Chat** | Text conversations from the web widget or the test chat in the agent configuration; no phone number required. |
 
 ## Overview
 
-Each channel represents a phone number or SIP endpoint linked to an agent. When a call arrives on that number, the assigned agent picks up and begins the conversation automatically.
+For **Voice**, each channel typically represents a phone number or SIP endpoint linked to an agent. When a call arrives on that number, the assigned agent answers and begins the conversation. For **Chat**, the agent is exposed through the Callem Studio web interface (test chat) or an embeddable widget; the same agent configuration (workflow, tools, call analysis) powers both voice and chat.
 
-## Phone Number Configuration
+---
+
+## Voice Channel (Phone Numbers)
 
 ### Assigning an Agent
 
@@ -41,7 +48,7 @@ Each channel represents a phone number or SIP endpoint linked to an agent. When 
   SIP trunking and number porting are on the roadmap. Contact **contact@callem.ai** if you need custom telephony integration.
 </Info>
 
-## Multi-Number Setup
+### Multi-Number Setup
 
 You can assign the same agent to multiple numbers, or different agents to different numbers:
 
@@ -51,6 +58,29 @@ You can assign the same agent to multiple numbers, or different agents to differ
 | **Department routing** | Sales number → Sales agent, Support number → Support agent |
 | **Geographic routing** | Regional numbers → location-specific agents |
 | **Overflow** | Primary + backup number → same agent for high availability |
+
+---
+
+## Chat Channel
+
+The **Chat** channel lets users talk to your agent via text in a browser. No phone number is required.
+
+### Where Chat Is Available
+
+| Context | Description |
+|--------|-------------|
+| **Test chat (Callem Studio)** | In **Build > Agents**, open an agent and use the **Test Chat** sidebar to run a conversation. Useful for development and QA. |
+| **Web widget** | Embed the chat widget on your website or app; it connects to the same Voice Gateway chatbot service and uses the same agent (workflow, tools, knowledge base, call analysis). |
+
+### Same Agent, Same Features
+
+The same agent configuration powers both voice and chat: system prompt, workflow, tools, knowledge base, end-call and transfer tools, and **call analysis**. At the end of a chat session, call analysis runs on the message history (if configured) and the result is stored on the chat record, so you can filter and analyze chat sessions in **Monitor > Analytics** and **Monitor > Calls** (Chats tab) the same way as voice calls.
+
+### Configuration
+
+Chat uses the **Voice Gateway** chatbot service. Ensure the agent’s workflow and model are correctly set; the dashboard frontend connects to the chatbot via the configured socket URL (e.g. `VITE_SOCKET_HOST` in your environment). No per-channel assignment is needed for chat — each agent is available for chat from the moment it is configured.
+
+---
 
 ## Best Practices
 
