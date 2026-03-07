@@ -59,6 +59,68 @@ You can assign the same agent to multiple numbers, or different agents to differ
 | **Geographic routing** | Regional numbers → location-specific agents |
 | **Overflow** | Primary + backup number → same agent for high availability |
 
+### A/B Testing (Weighted Agent Routing)
+
+You can assign **multiple agents** to a single phone number with traffic split percentages. This enables A/B testing of different agent configurations on real calls.
+
+#### Setting Up A/B Testing
+
+<Steps>
+  <Step title="Navigate to Channels">
+    Go to **Deploy > Channels** and find the phone number you want to configure.
+  </Step>
+  <Step title="Add a variant">
+    Click **Add variant** to add a second agent to the number.
+  </Step>
+  <Step title="Select agents">
+    Choose a different agent for each variant (e.g. your current agent as control, a new prompt version as variant).
+  </Step>
+  <Step title="Set traffic weights">
+    Use the slider or type a percentage for each variant. For example, 80% for the control and 20% for the new variant.
+  </Step>
+  <Step title="Save">
+    The configuration auto-saves once all variants have an agent selected. An **A/B Test** badge appears on the phone number card.
+  </Step>
+</Steps>
+
+#### How Routing Works
+
+When a call arrives on a number with multiple agents configured:
+
+1. The Voice Gateway reads the weight of each agent variant
+2. A **weighted random selection** picks one agent for this call
+3. The selected agent handles the entire call as if it were the only agent assigned
+
+Each call is independently routed — there is no session stickiness or caller-based assignment.
+
+#### Traffic Split Examples
+
+| Configuration | Effect |
+|---------------|--------|
+| Agent A: 50%, Agent B: 50% | Even split — each agent handles roughly half the calls |
+| Agent A: 90%, Agent B: 10% | Conservative test — only 10% of calls go to the new variant |
+| Agent A: 33%, Agent B: 33%, Agent C: 34% | Three-way test |
+
+#### Visual Feedback
+
+The configuration UI provides:
+
+- A **colored weight bar** showing the proportional split visually
+- A **legend** with agent names and percentages
+- A **warning** if the total weight does not equal 100%
+
+<Info>
+  Weights do not need to total exactly 100%. The system normalizes weights proportionally. However, keeping them at 100% makes the percentages intuitive to read.
+</Info>
+
+#### Removing A/B Testing
+
+To go back to single-agent mode, remove the extra variants by clicking the trash icon. The remaining agent is automatically set to 100%.
+
+#### Backward Compatibility
+
+Numbers without A/B testing configured continue to work exactly as before — the single assigned agent handles all calls. No migration is needed.
+
 ---
 
 ## Chat Channel
