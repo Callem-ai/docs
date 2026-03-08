@@ -71,7 +71,7 @@ $$\text{Rate} = \frac{\text{Calls matching numerator conditions}}{\text{Calls ma
 | Hot lead rate too low | `callAnalysis.leadQuality = hot` | `isEngaged = true` | `< 20%` |
 | Appointment booking rate | `callAnalysis.appointmentBooked = true` | All calls | `< 15%` |
 | Negative sentiment spike | `callAnalysis.sentiment = negative` | `isEngaged = true` | `> 25%` |
-| Automated call success | `callAnalysis.issueResolved = true` | `endedReason != voicemail` | `< 70%` |
+| Automated call success | `callAnalysis.issueResolved = true` | `isVoicemail = false` | `< 70%` |
 
 ### Condition Logic
 
@@ -84,7 +84,7 @@ Both numerator and denominator support multiple conditions combined with **AND**
 Add conditions based on your custom [call analysis fields](/build/agents#call-analysis-tab) to create highly targeted alerts. The available fields are loaded dynamically from your agent configurations.
 
 **Built-in filter fields:**
-- `duration`, `isEngaged`, `endedReason`, `callerNum`, `calledNum`, `totalInteraction`
+- `duration`, `isEngaged`, `isTransferred`, `isVoicemail`, `callerNum`, `totalInteraction`
 
 **Call Analysis filter fields** (from your agent config):
 - Any field you've defined (e.g. `sentiment`, `leadQuality`, `appointmentBooked`, `npsScore`)

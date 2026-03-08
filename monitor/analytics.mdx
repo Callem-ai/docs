@@ -179,7 +179,7 @@ Each chart can have its own independent filters (in addition to the global page 
 
 | Filter Category | Fields |
 |----------------|--------|
-| **Call fields** | Duration / isEngaged / endedReason / callerNum / calledNum / totalInteraction |
+| **Call fields** | Duration / isEngaged / callerNum / calledNum / totalInteraction |
 | **Agent** | Filter by specific agent(s) |
 | **Call Analysis** | Any custom analysis field defined on your agents |
 
@@ -226,7 +226,7 @@ The chart editor shows a live preview that updates as you change settings, so yo
     The custom rate metric lets you calculate any business-specific percentage (e.g. "appointment booking rate among interested callers") directly in the dashboard without external tooling.
   </Accordion>
   <Accordion title="Combine chart filters with global filters">
-    Global filters (date, agent, channel) apply to all charts. Use per-chart filters for specific slices — e.g. a chart showing only calls where `endedReason = transfer`.
+    Global filters (date, agent, channel) apply to all charts. Use per-chart filters for specific slices — e.g. a chart showing only calls where `isEngaged = true`.
   </Accordion>
   <Accordion title="Use the channel filter for channel-specific views">
     To compare or isolate performance by channel, use the **Channel** filter: select **Voice** for phone metrics and **Chat** for web widget metrics, or both for combined conversation metrics. Custom dashboard charts respect the same channel selection.
