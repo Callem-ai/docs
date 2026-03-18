@@ -24,6 +24,7 @@
             "group": "Build",
             "pages": [
               "build/agents",
+              "build/agent-versioning",
               "build/knowledge-base",
               "build/tools",
               "build/workflows"
@@ -48,7 +49,8 @@
             "group": "Settings",
             "pages": [
               "settings/team",
-              "settings/api-keys"
+              "settings/api-keys",
+              "settings/webhooks"
             ]
           }
         ]

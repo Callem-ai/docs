@@ -78,8 +78,11 @@ You can assign **multiple agents** to a single phone number with traffic split p
   <Step title="Set traffic weights">
     Use the slider or type a percentage for each variant. For example, 80% for the control and 20% for the new variant.
   </Step>
+  <Step title="Pin a version (optional)">
+    For each variant, use the **version dropdown** to pin a specific [published version](/build/agent-versioning) or leave it on "Draft". This lets you test a frozen configuration against a new draft.
+  </Step>
   <Step title="Save">
-    The configuration auto-saves once all variants have an agent selected. An **A/B Test** badge appears on the phone number card.
+    Click the **Save** button that appears at the bottom of the phone number card. The button is only enabled when all variants have an agent selected and the total weight equals exactly **100%**. An **A/B Test** badge appears on the card.
   </Step>
 </Steps>
 
@@ -110,7 +113,7 @@ The configuration UI provides:
 - A **warning** if the total weight does not equal 100%
 
 <Info>
-  Weights do not need to total exactly 100%. The system normalizes weights proportionally. However, keeping them at 100% makes the percentages intuitive to read.
+  The Save button is disabled until weights total exactly 100% and every variant has an agent selected. This prevents accidentally deploying an incomplete configuration.
 </Info>
 
 #### Removing A/B Testing

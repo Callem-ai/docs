@@ -1,0 +1,329 @@
+---
+title: "Webhooks"
+description: "Receive real-time HTTP notifications when calls and chats start, end, or are analyzed."
+---
+
+# Webhooks
+
+Webhooks let you receive real-time HTTP POST notifications when events occur in your project. Use them to sync call data with your CRM, trigger automations, log conversations, or build custom dashboards.
+
+## How It Works
+
+1. You register a webhook URL in **Settings > Webhooks**
+2. When an event occurs (e.g. a call ends), Callem sends an HTTP POST to your URL with the event payload
+3. Your server processes the payload and returns a `2xx` status code
+4. If delivery fails, Callem retries up to 3 times with exponential backoff
+
+---
+
+## Events
+
+| Event | Trigger |
+|-------|---------|
+| `call_started` | A voice call begins (agent picks up) |
+| `call_ended` | A voice call ends (includes transcription and duration) |
+| `call_analyzed` | Post-call analysis completes (includes call analysis results) |
+| `chat_started` | A chat session begins |
+| `chat_ended` | A chat session ends (includes transcription) |
+| `chat_analyzed` | Post-chat analysis completes (includes analysis results) |
+
+---
+
+## Creating a Webhook
+
+<Steps>
+  <Step title="Navigate to Settings">
+    Go to **Settings** from the sidebar, then select the **Webhooks** tab.
+  </Step>
+  <Step title="Click Add Webhook">
+    Click the **Add Webhook** button.
+  </Step>
+  <Step title="Configure the webhook">
+    Fill in the following fields:
+
+    | Field | Description | Required |
+    |-------|-------------|----------|
+    | **URL** | The HTTPS endpoint that will receive events | Yes |
+    | **Description** | A label to identify this webhook | No |
+    | **Events** | Which events to subscribe to | Yes (at least one) |
+    | **Agent scope** | All agents or specific agents only | Yes |
+  </Step>
+  <Step title="Save">
+    Click **Create**. A signing secret is generated automatically.
+  </Step>
+</Steps>
+
+<Info>
+  Only HTTPS URLs are accepted. HTTP, localhost, and private IP addresses are blocked for security.
+</Info>
+
+### Agent Scope
+
+By default, a webhook receives events for **all agents** in the project. You can restrict it to specific agents if you only want notifications for certain use cases (e.g. only your production sales agent).
+
+---
+
+## Payload Structure
+
+Every webhook delivery is an HTTP POST with a JSON body. The top-level structure is:
+
+```json
+{
+  "event": "call_ended",
+  "timestamp": "2026-03-17T21:58:39.687Z",
+  "call": { ... }
+}
+```
+
+### Headers
+
+Each request includes the following headers:
+
+| Header | Description |
+|--------|-------------|
+| `Content-Type` | `application/json` |
+| `x-callem-event` | The event name (e.g. `call_ended`) |
+| `x-callem-timestamp` | Unix timestamp of the event |
+| `x-callem-signature` | HMAC-SHA256 signature for verification |
+| `User-Agent` | `Callem-Webhook/1.0` |
+
+### call_started
+
+```json
+{
+  "event": "call_started",
+  "timestamp": "2026-03-17T21:57:57.654Z",
+  "call": {
+    "id": "69b9ce653d9cf893b843b8a7",
+    "agentCollectionId": "6970f630646ae50d690c3035",
+    "agentVersionNumber": null,
+    "callerNum": "+33612345678",
+    "calledNum": "+33187654321",
+    "isLive": true,
+    "createdAt": "2026-03-17T21:57:57.676Z"
+  }
+}
+```
+
+### call_ended
+
+Includes the full transcription (cleaned — only speaker messages and tool calls, no internal metadata):
+
+```json
+{
+  "event": "call_ended",
+  "timestamp": "2026-03-17T21:58:39.687Z",
+  "call": {
+    "id": "69b9ce653d9cf893b843b8a7",
+    "agentCollectionId": "6970f630646ae50d690c3035",
+    "agentVersionNumber": 3,
+    "callerNum": "+33612345678",
+    "calledNum": "+33187654321",
+    "duration": 39.812,
+    "isEngaged": true,
+    "totalInteraction": 2,
+    "isLive": false,
+    "transcription": [
+      {
+        "speaker": "Agent",
+        "text": "Bonjour, comment puis-je vous aider ?",
+        "startTime": 0.325
+      },
+      {
+        "speaker": "User",
+        "text": "Je voudrais connaître les délais de livraison.",
+        "startTime": 5.1
+      },
+      {
+        "speaker": "Tool",
+        "data": { "toolName": "Retrieve" },
+        "startTime": 15.2
+      },
+      {
+        "speaker": "Agent",
+        "text": "La livraison prend 24 à 48 heures.",
+        "startTime": 16.6
+      }
+    ],
+    "createdAt": "2026-03-17T21:57:57.676Z",
+    "updatedAt": "2026-03-17T21:58:39.771Z"
+  }
+}
+```
+
+### call_analyzed
+
+Same as `call_ended`, plus the `callAnalysis` object containing the extracted fields:
+
+```json
+{
+  "event": "call_analyzed",
+  "timestamp": "2026-03-17T21:58:45.123Z",
+  "call": {
+    "id": "69b9ce653d9cf893b843b8a7",
+    "agentCollectionId": "6970f630646ae50d690c3035",
+    "duration": 39.812,
+    "transcription": [ ... ],
+    "callAnalysis": {
+      "primary_intention": "FAQ",
+      "sentiment": "neutral",
+      "is_automated": true,
+      "call_outcome": "AUTOMATED",
+      "faq_topic": "delivery",
+      "faq_response_delivered": true
+    },
+    "createdAt": "2026-03-17T21:57:57.676Z",
+    "updatedAt": "2026-03-17T21:58:39.771Z"
+  }
+}
+```
+
+### Chat Events
+
+Chat events (`chat_started`, `chat_ended`, `chat_analyzed`) follow the same structure but use a `chat` key instead of `call`, and do not include `callerNum`, `calledNum`, or `duration`.
+
+---
+
+## Security — Verifying Signatures
+
+Every webhook delivery is signed with your webhook's secret using **HMAC-SHA256**. You should verify the signature to ensure the request is genuinely from Callem.
+
+### Verification Algorithm
+
+1. Read the `x-callem-timestamp` and `x-callem-signature` headers
+2. Construct the signed payload: `{timestamp}.{request_body}`
+3. Compute HMAC-SHA256 of that string using your webhook secret
+4. Compare the computed signature with `x-callem-signature`
+
+```javascript Node.js Verification Example
+const crypto = require('crypto');
+
+function verifyWebhook(req, secret) {
+  const timestamp = req.headers['x-callem-timestamp'];
+  const signature = req.headers['x-callem-signature'];
+  const body = JSON.stringify(req.body);
+
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(`${timestamp}.${body}`)
+    .digest('hex');
+
+  return crypto.timingSafeEqual(
+    Buffer.from(signature, 'hex'),
+    Buffer.from(expected, 'hex')
+  );
+}
+```
+
+<Tip>
+  Always use a constant-time comparison (`timingSafeEqual`) to prevent timing attacks. Never compare signatures with `===`.
+</Tip>
+
+### Rotating the Secret
+
+If you suspect your secret has been compromised:
+
+1. Open the webhook in **Settings > Webhooks**
+2. Click the menu icon and select **Rotate Secret**
+3. A new secret is generated immediately — the old secret stops working
+4. Update your server with the new secret
+
+<Warning>
+  Rotating the secret is immediate. Any in-flight deliveries signed with the old secret will fail verification on your end. Update your server quickly after rotating.
+</Warning>
+
+---
+
+## Managing Webhooks
+
+### Editing
+
+Click the **Edit** option in the webhook's dropdown menu. You can change the URL, description, subscribed events, and agent scope. The signing secret is not affected.
+
+### Duplicating
+
+Click **Duplicate** to create a copy of a webhook with the same configuration but a new signing secret. Useful for setting up staging and production webhooks with the same events.
+
+### Enabling / Disabling
+
+Use the toggle switch on the webhook card to enable or disable it without deleting the configuration.
+
+### Deleting
+
+Click **Delete** from the dropdown menu. A confirmation dialog appears before deletion.
+
+---
+
+## Delivery Logs
+
+Each webhook tracks recent delivery attempts. To view them:
+
+1. Open the webhook in **Settings > Webhooks**
+2. Click **View Logs** in the dropdown menu
+3. See the status (success/failed), HTTP status code, and timestamp for each delivery
+
+Delivery logs are retained for **30 days**.
+
+---
+
+## Testing
+
+To verify your webhook endpoint is working:
+
+1. Open the webhook in **Settings > Webhooks**
+2. Click **Send Test** from the dropdown menu
+3. A test `call_started` event is sent to your URL
+4. Check the delivery logs to confirm it was received
+
+<Info>
+  Test events are rate-limited to 5 per minute to prevent abuse.
+</Info>
+
+---
+
+## Retry Policy
+
+If your endpoint returns a non-2xx status code or the request times out (10 seconds), Callem retries delivery:
+
+| Attempt | Delay |
+|---------|-------|
+| 1st retry | ~2 seconds |
+| 2nd retry | ~4 seconds |
+| 3rd retry | ~8 seconds |
+
+After 3 failed attempts, the delivery is marked as **failed** in the logs. No further retries are attempted.
+
+---
+
+## Limits
+
+| Limit | Value |
+|-------|-------|
+| Max webhooks per project | 10 |
+| URL protocol | HTTPS only |
+| Request timeout | 10 seconds |
+| Max retries | 3 |
+| Delivery log retention | 30 days |
+| Test event rate limit | 5 per minute |
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always verify signatures">
+    Never trust a webhook payload without verifying the HMAC signature. This prevents malicious actors from sending fake events to your endpoint.
+  </Accordion>
+  <Accordion title="Return 200 quickly">
+    Process webhook payloads asynchronously. Return a `200 OK` immediately and queue the actual processing. If your endpoint takes too long, the request may time out and trigger unnecessary retries.
+  </Accordion>
+  <Accordion title="Handle duplicate deliveries">
+    In rare cases, the same event may be delivered more than once. Use the `call.id` or `chat.id` as an idempotency key to avoid processing duplicates.
+  </Accordion>
+  <Accordion title="Use agent scope to reduce noise">
+    If you only need events for specific agents (e.g. your production sales agent), configure the webhook's agent scope to filter out irrelevant events.
+  </Accordion>
+  <Accordion title="Monitor delivery logs">
+    Check the delivery logs periodically to ensure your endpoint is healthy. Persistent failures may indicate a misconfigured URL, firewall issue, or server error.
+  </Accordion>
+</AccordionGroup>

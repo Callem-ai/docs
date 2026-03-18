@@ -1,0 +1,148 @@
+---
+title: "Agent Versioning"
+description: "Publish immutable snapshots of your agent configuration, pin versions to channels, and track changes over time."
+---
+
+# Agent Versioning
+
+Agent versioning lets you capture the full configuration of an agent at a point in time, creating an **immutable snapshot** you can deploy, compare, or restore later. This is essential for production deployments where you need reproducibility and safe rollbacks.
+
+## Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **Draft** | The live, editable configuration of your agent. Changes are immediate. This is what you work with in the agent editor. |
+| **Published version** | An immutable snapshot of the agent's full configuration at a specific moment. Once published, it cannot be modified. |
+| **Version number** | Auto-incrementing integer (V1, V2, V3...) assigned when you publish. |
+| **Version pinning** | Deploying a specific published version to a channel (phone number), so production calls use a frozen configuration instead of the draft. |
+
+<Info>
+  The draft is always your working copy. Publishing a version does not affect the draft — you can continue editing freely after publishing.
+</Info>
+
+---
+
+## What Is Included in a Version
+
+A published version captures the complete agent state:
+
+| Component | Included |
+|-----------|----------|
+| Agent name | Yes |
+| System prompt and welcome message | Yes |
+| LLM provider, model, temperature, max tokens | Yes |
+| TTS voice, STT provider, language | Yes |
+| VAD, interruption, silence, inactivity settings | Yes |
+| Background sound configuration | Yes |
+| Linked knowledge bases (IDs and retrieval settings) | Yes |
+| Linked tools (full tool configuration) | Yes |
+| Call analysis fields and prompt | Yes |
+| Workflow JSON (for workflow agents) | Yes |
+
+---
+
+## Publishing a Version
+
+<Steps>
+  <Step title="Open the agent">
+    Navigate to **Build > Agents** and select the agent you want to version.
+  </Step>
+  <Step title="Click Save Version">
+    In the agent editor header, click the **Save Version** button.
+  </Step>
+  <Step title="Name and describe">
+    Enter a **version name** (e.g. "Production v1", "Post-holiday update") and an optional description explaining what changed.
+  </Step>
+  <Step title="Publish">
+    Click **Save**. The version is created with the next available version number.
+  </Step>
+</Steps>
+
+<Warning>
+  Published versions are immutable. You cannot edit a published version. To make changes, edit the draft and publish a new version.
+</Warning>
+
+---
+
+## Version History
+
+Click the **version history** button in the agent editor header to open the version history panel. It shows:
+
+- The current **Draft** at the top
+- All published versions in reverse chronological order
+- For each version: version number, name, description, author, and publication date
+
+---
+
+## Restoring a Version
+
+If you need to revert the draft to a previous configuration:
+
+<Steps>
+  <Step title="Open version history">
+    Click the version history button in the agent editor.
+  </Step>
+  <Step title="Select a version">
+    Find the version you want to restore.
+  </Step>
+  <Step title="Click Restore">
+    Click the **Restore** button on the version. The agent's draft configuration is overwritten with the snapshot data.
+  </Step>
+</Steps>
+
+<Info>
+  Restoring a version overwrites the current draft. If you want to preserve the current draft, publish it as a new version before restoring.
+</Info>
+
+---
+
+## Version Pinning (Channels)
+
+By default, phone numbers use the agent's **draft** configuration. For production stability, you can pin a phone number to a specific published version.
+
+1. Navigate to **Deploy > Channels**
+2. On the phone number, select an agent
+3. Use the **version dropdown** next to the agent selector to choose a published version (or leave it on "Draft")
+4. Save the configuration
+
+When a version is pinned, incoming calls on that number use the frozen snapshot — even if you continue editing the draft.
+
+<Tip>
+  Use version pinning for production numbers and keep the draft for development and testing. This lets you iterate safely without affecting live calls.
+</Tip>
+
+### Version Pinning with A/B Testing
+
+When running an [A/B test](/deploy/channels#ab-testing-weighted-agent-routing), each variant can be pinned to a different version independently. For example:
+
+| Variant | Agent | Version | Weight |
+|---------|-------|---------|--------|
+| Control | Sales Agent | V3 (stable) | 80% |
+| Test | Sales Agent | Draft (new prompt) | 20% |
+
+---
+
+## Filtering by Version
+
+Published versions integrate with monitoring and analytics:
+
+- **Monitor > Calls**: filter the call list by version number to see only calls handled by a specific version
+- **Monitor > Analytics**: version filter available on dashboards to compare performance across versions
+
+This makes it easy to measure the impact of configuration changes on real call data.
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Publish before deploying to production">
+    Always publish a version and pin it to your production number before going live. This ensures calls are not affected by subsequent edits to the draft.
+  </Accordion>
+  <Accordion title="Use descriptive version names">
+    Names like "V1" are less useful than "Added appointment booking tool" or "French prompt rewrite". A good name tells you what changed without opening the snapshot.
+  </Accordion>
+  <Accordion title="Compare versions via call analytics">
+    After deploying a new version, use the version filter in Analytics to compare metrics (call duration, sentiment, automation rate) between the old and new versions.
+  </Accordion>
+</AccordionGroup>
