@@ -13,10 +13,10 @@ Callem Studio uses **Retrieval-Augmented Generation (RAG)** to give your agent r
 
 <Steps>
   <Step title="Content ingestion">
-    When you create a knowledge item, the text is split into chunks and each chunk is converted into a vector embedding using Azure OpenAI embeddings.
+    When you create a knowledge item, the text is split into chunks and each chunk is converted into a vector embedding.
   </Step>
   <Step title="Vector storage">
-    Embeddings are stored in MongoDB Atlas Vector Search for fast similarity matching.
+    Embeddings are stored in a vector database for fast similarity matching.
   </Step>
   <Step title="Real-time retrieval">
     During a call, the caller's question is also converted into a vector. The system finds the most similar chunks from your knowledge base.
