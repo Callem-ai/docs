@@ -9,11 +9,11 @@ The Integrations module lets you connect external business tools (CRM, ticketing
 
 ## How It Works
 
-Callem uses [Unified.to](https://unified.to) as the integration layer. This provides:
+Callem provides a built-in integration layer that supports:
 
 - **200+ integrations** across CRM, ticketing, and more
-- **OAuth authentication** — users connect their accounts via standard OAuth flows
-- **Zero data storage** — credentials are managed by Unified.to (SOC 2, GDPR compliant)
+- **OAuth authentication** — connect your accounts via standard OAuth flows
+- **Zero data storage** — credentials are never stored by Callem
 - **Unified API** — all providers use the same normalized endpoints
 
 ## Connecting an Integration
@@ -67,6 +67,6 @@ Click the **Unplug** icon on a connected integration to disconnect. This removes
 
 ## Security
 
-- OAuth credentials are managed by Unified.to — Callem never stores your CRM/ticketing passwords
-- API calls are proxied through Unified.to's zero-storage infrastructure
-- Unified.to is SOC 2 Type II, GDPR, HIPAA, and CCPA compliant
+- Callem never stores your CRM/ticketing passwords — OAuth credentials are managed securely by the integration layer
+- API calls are proxied through a zero-storage infrastructure
+- The integration infrastructure is SOC 2 Type II, GDPR, HIPAA, and CCPA compliant

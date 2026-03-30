@@ -12,7 +12,7 @@ Quality Review automatically evaluates your production calls against custom crit
 | Concept | Description |
 |---------|-------------|
 | **QA Config** | A named evaluation setup: which calls to evaluate (cohort) + how to score them (criteria) |
-| **AI Criteria** | Custom prompts evaluated by an LLM judge on each call transcript |
+| **AI Criteria** | Custom prompts evaluated by AI on each call transcript |
 | **Performance Metrics** | Built-in quantitative thresholds (latency, engagement, etc.) |
 | **Evaluation** | The result of scoring a single call against all criteria |
 | **Calibration** | Manual override of AI scores by a human reviewer |
@@ -38,7 +38,7 @@ Two types of criteria:
 
 #### AI Evaluated Conditions
 
-Custom prompts evaluated by GPT on each call transcript. Each condition has:
+Custom prompts evaluated by AI on each call transcript. Each condition has:
 
 - **Name** — short identifier (e.g. "Call resolved")
 - **Prompt** — detailed description for the LLM evaluator (e.g. "The AI agent was able to fully resolve the user's query without needing to transfer")
@@ -72,7 +72,7 @@ Click **Run Evaluation** on any QA config to evaluate new calls that match the c
 1. Queries calls matching the cohort filters (agents, date range, duration, call analysis fields)
 2. Excludes already-evaluated calls
 3. Applies sampling (percentage and weekly cap)
-4. For each call, sends the transcript to GPT for AI criteria scoring
+4. For each call, sends the transcript to the AI evaluator for criteria scoring
 5. Computes performance metric pass/fail from call data
 6. Calculates weighted overall score
 7. Stores results
@@ -105,7 +105,7 @@ The Evaluated Calls tab lists all scored calls. Each entry shows:
 ## Calibration
 
 <Tip>
-  Calibration allows human reviewers to override AI scores. This is useful for training the evaluation system and handling edge cases the LLM misjudges.
+  Calibration allows human reviewers to override AI scores. This is useful for handling edge cases the AI misjudges and improving evaluation accuracy over time.
 </Tip>
 
 Use the calibration API to manually mark individual criteria as passed or failed, with optional notes explaining the override.
@@ -116,4 +116,4 @@ Use the calibration API to manually mark individual criteria as passed or failed
 - **Use performance metrics** for objective, measurable thresholds
 - **Set sampling to 20-50%** initially to control evaluation costs
 - **Review failed calls** to identify patterns and improve agent prompts
-- **Calibrate regularly** to catch cases where the LLM judge is wrong
+- **Calibrate regularly** to catch cases where the AI evaluator is wrong

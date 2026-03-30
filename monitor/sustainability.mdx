@@ -28,16 +28,13 @@ The dashboard displays 6 key performance indicators:
 
 Emissions are computed from three components of the voice AI pipeline:
 
-| Component | What it measures | Energy factor |
-|-----------|-----------------|---------------|
-| **LLM** | Token processing (inference) | 0.5 kWh per 1M tokens |
-| **TTS** | Text-to-speech synthesis (uncached characters only) | 0.5 kWh per 1M characters |
-| **STT** | Speech-to-text transcription (call duration) | 0.1 kWh per hour |
+| Component | What it measures |
+|-----------|-----------------|
+| **LLM** | Token processing (inference) — proportional to the number of tokens generated |
+| **TTS** | Text-to-speech synthesis — only uncached characters count; cached responses produce zero emissions |
+| **STT** | Speech-to-text transcription — proportional to call duration |
 
-The energy consumption is then multiplied by the **carbon intensity** of the datacenter's electricity:
-
-- **France (nuclear mix)**: 50 gCO2/kWh
-- **Low-carbon share**: 92% (nuclear + hydro + wind + solar)
+Energy consumption is calculated per component and then converted to CO2 using the carbon intensity of the datacenter's electricity mix. Callem's infrastructure runs on **low-carbon energy** (92% from nuclear, hydro, wind, and solar).
 
 <Info>
   TTS cache hits produce zero emissions. When a TTS response is served from cache, no GPU compute is needed. The dashboard only counts `uncachedChars`.
@@ -67,5 +64,5 @@ The Sustainability dashboard supports **CSRD** (Corporate Sustainability Reporti
 | **E1-6** (GHG emissions) | Total CO2, CO2 per conversation, breakdown by source |
 
 <Tip>
-  These metrics are calculated using uniform coefficients across all providers. Per-model/provider coefficients will be available in future updates for more precise reporting.
+  Per-model and per-provider coefficients will be available in future updates for more granular reporting.
 </Tip>

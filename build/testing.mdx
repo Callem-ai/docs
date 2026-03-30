@@ -48,10 +48,10 @@ Each criterion returns a score (0-10) with a textual justification.
 
 Click the **Play** button next to a scenario to run it. The system:
 
-1. Connects to the agent via WebSocket (same channel as the test chat)
-2. Uses an LLM to generate realistic caller messages based on the persona and objective
+1. Connects to the agent (same channel as the test chat)
+2. Uses AI to generate realistic caller messages based on the persona and objective
 3. Exchanges messages with the agent until the conversation ends or max turns is reached
-4. Sends the full transcript to an LLM evaluator that scores each criterion
+4. Sends the full transcript to an AI evaluator that scores each criterion
 5. Stores the result with transcript, scores, and pass/fail status
 
 ## Viewing Results
