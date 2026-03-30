@@ -1,0 +1,75 @@
+---
+title: "Testing"
+description: "Validate your agents before deployment with AI-powered test suites."
+---
+
+# Testing
+
+The Testing module lets you define scripted conversation scenarios, run them automatically against your agents, and evaluate the results with an LLM judge. Catch regressions before they reach production.
+
+## Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **Test Suite** | A named collection of scenarios linked to a specific agent |
+| **Scenario** | A simulated conversation defined by a persona, objective, max turns, and success criteria |
+| **Test Run** | A single execution of a scenario with transcript and evaluation results |
+
+## Creating a Test Suite
+
+1. Navigate to **Build > Testing**
+2. Click **New Suite**
+3. Give it a name and select the agent to test
+4. Add one or more scenarios
+
+## Defining a Scenario
+
+Each scenario describes a simulated caller and what the agent should achieve:
+
+| Field | Description |
+|-------|-------------|
+| **Name** | Short identifier (e.g. "Appointment Booking Flow") |
+| **Persona** | Who the simulated caller is — written in natural language (e.g. "You are a 45-year-old customer calling to book an appointment. You are in a hurry.") |
+| **Objective** | What the caller is trying to achieve (e.g. "Successfully book an appointment for tomorrow afternoon") |
+| **Max Turns** | Maximum number of conversation exchanges before the test times out |
+| **Success Criteria** | A list of conditions the agent must meet for the test to pass |
+
+### Success Criteria
+
+Each criterion is a text description evaluated by an LLM judge after the conversation completes. Examples:
+
+- "The agent confirmed a specific appointment date and time"
+- "The agent did not invent information not present in its knowledge base"
+- "The agent maintained a professional and empathetic tone"
+
+Each criterion returns a score (0-10) with a textual justification.
+
+## Running a Test
+
+Click the **Play** button next to a scenario to run it. The system:
+
+1. Connects to the agent via WebSocket (same channel as the test chat)
+2. Uses an LLM to generate realistic caller messages based on the persona and objective
+3. Exchanges messages with the agent until the conversation ends or max turns is reached
+4. Sends the full transcript to an LLM evaluator that scores each criterion
+5. Stores the result with transcript, scores, and pass/fail status
+
+## Viewing Results
+
+After a run, expand the scenario card to see:
+
+- **Pass/Fail status** with overall score
+- **Per-criterion results** — each criterion shows its score (0-10) and the evaluator's explanation
+- **Full transcript** — the complete exchange between the simulated caller and the agent
+- **Duration** — how long the test took
+
+<Info>
+  Tests are executed via text chat, not voice. This makes them fast and cost-effective for rapid iteration.
+</Info>
+
+## Best Practices
+
+- **Start simple**: begin with 2-3 core scenarios covering your most common call flows
+- **Be specific in criteria**: vague criteria like "agent handled this well" produce inconsistent scores; prefer atomic checks like "agent asked for the postal code"
+- **Test after every prompt change**: use Testing as a pre-deployment gate to catch regressions
+- **Vary personas**: test with different caller personalities (patient, impatient, confused, hostile) to validate robustness

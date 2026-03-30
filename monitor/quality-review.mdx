@@ -1,0 +1,119 @@
+---
+title: "Quality Review"
+description: "Evaluate call quality at scale with AI criteria and performance metrics."
+---
+
+# Quality Review
+
+Quality Review automatically evaluates your production calls against custom criteria. Define what a successful call looks like, run evaluations, and track quality trends over time.
+
+## Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **QA Config** | A named evaluation setup: which calls to evaluate (cohort) + how to score them (criteria) |
+| **AI Criteria** | Custom prompts evaluated by an LLM judge on each call transcript |
+| **Performance Metrics** | Built-in quantitative thresholds (latency, engagement, etc.) |
+| **Evaluation** | The result of scoring a single call against all criteria |
+| **Calibration** | Manual override of AI scores by a human reviewer |
+
+## Creating a QA Config
+
+The creation wizard guides you through 3 steps:
+
+### Step 1: Define the Cohort
+
+Choose which calls to evaluate:
+
+| Filter | Description |
+|--------|-------------|
+| **Cohort Name** | A descriptive name (e.g. "Support Calls - Weekly QA") |
+| **Agents** | Select specific agents or leave empty for all agents |
+| **Rolling Period** | How many days back to look (e.g. last 7 days) |
+| **Sampling %** | Percentage of matching calls to evaluate (controls cost) |
+
+### Step 2: Define Resolution Criteria
+
+Two types of criteria:
+
+#### AI Evaluated Conditions
+
+Custom prompts evaluated by GPT on each call transcript. Each condition has:
+
+- **Name** — short identifier (e.g. "Call resolved")
+- **Prompt** — detailed description for the LLM evaluator (e.g. "The AI agent was able to fully resolve the user's query without needing to transfer")
+- **Weight** — relative importance (1-10)
+
+#### Performance Metrics
+
+Built-in quantitative metrics with configurable thresholds:
+
+| Metric | Description | Example threshold |
+|--------|-------------|-------------------|
+| LLM Latency | Average response time | < 1000ms |
+| TTS Latency | Voice synthesis time | < 500ms |
+| Call Duration | Total call length | > 30s |
+| Interactions | Number of exchanges | > 3 |
+| Engagement | Whether the caller was engaged | = true |
+| Transfer Rate | Whether the call was transferred | = false |
+| LLM Tokens | Total tokens consumed | < 50000 |
+| TTS Cache Hit Rate | Percentage of cached TTS | > 80% |
+
+Each metric uses an operator (less than, greater than, etc.) and a threshold value.
+
+### Step 3: Review and Create
+
+Review your configuration and click **Save & Run QA** to create the config and immediately run the first evaluation.
+
+## Running Evaluations
+
+Click **Run Evaluation** on any QA config to evaluate new calls that match the cohort filters. The system:
+
+1. Queries calls matching the cohort filters (agents, date range, duration, call analysis fields)
+2. Excludes already-evaluated calls
+3. Applies sampling (percentage and weekly cap)
+4. For each call, sends the transcript to GPT for AI criteria scoring
+5. Computes performance metric pass/fail from call data
+6. Calculates weighted overall score
+7. Stores results
+
+## Dashboard
+
+The dashboard provides a comprehensive view of quality metrics:
+
+### KPIs (10+)
+
+Calls Analyzed, Average Score, Pass Rate, Resolution Rate, Failed Count, LLM Latency, TTS Latency, Average Duration, Engagement Rate, Transfer Rate.
+
+### Charts
+
+- **Score & Resolution Trend** — area chart showing score and pass rate over time
+- **Score by Agent** — horizontal bar chart comparing agents
+- **AI Criteria Scores** — progress bars showing average score per criterion with pass rate
+- **Performance Metrics** — cards showing average value and pass rate per metric
+
+## Evaluated Calls
+
+The Evaluated Calls tab lists all scored calls. Each entry shows:
+
+- Pass/fail status with overall score
+- Expandable detail with:
+  - **AI Evaluation** — per-criterion score (0-10) with explanation
+  - **Performance Metrics** — actual value vs threshold with pass/fail
+  - **Call Metrics** — duration, latency, interactions, engagement, transfer status
+
+## Calibration
+
+<Tip>
+  Calibration allows human reviewers to override AI scores. This is useful for training the evaluation system and handling edge cases the LLM misjudges.
+</Tip>
+
+Use the calibration API to manually mark individual criteria as passed or failed, with optional notes explaining the override.
+
+## Best Practices
+
+- **Start with 3-5 AI criteria** covering your most important quality dimensions
+- **Use performance metrics** for objective, measurable thresholds
+- **Set sampling to 20-50%** initially to control evaluation costs
+- **Review failed calls** to identify patterns and improve agent prompts
+- **Calibrate regularly** to catch cases where the LLM judge is wrong

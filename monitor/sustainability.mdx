@@ -1,0 +1,71 @@
+---
+title: "Sustainability"
+description: "Track the carbon footprint and energy consumption of your voice AI operations."
+---
+
+# Sustainability
+
+The Sustainability tab in Analytics provides a real-time view of the environmental impact of your voice AI operations. Monitor CO2 emissions, energy consumption, and the benefits of hosting on low-carbon infrastructure.
+
+## Accessing Sustainability Metrics
+
+Navigate to **Monitor > Analytics** and click the **Sustainability** tab (next to Overview).
+
+## KPIs
+
+The dashboard displays 6 key performance indicators:
+
+| KPI | Unit | Description |
+|-----|------|-------------|
+| **Total CO2** | g / kg | Total greenhouse gas emissions for the selected period |
+| **CO2 / conversation** | g | Average emissions per conversation |
+| **Energy consumed** | Wh / kWh | Total energy consumption across all components |
+| **Energy / conversation** | Wh | Average energy per conversation |
+| **Low-carbon energy** | % | Share of low-carbon energy in the datacenter's electricity mix |
+| **LLM tokens processed** | count | Total tokens processed by language models |
+
+## How Emissions Are Calculated
+
+Emissions are computed from three components of the voice AI pipeline:
+
+| Component | What it measures | Energy factor |
+|-----------|-----------------|---------------|
+| **LLM** | Token processing (inference) | 0.5 kWh per 1M tokens |
+| **TTS** | Text-to-speech synthesis (uncached characters only) | 0.5 kWh per 1M characters |
+| **STT** | Speech-to-text transcription (call duration) | 0.1 kWh per hour |
+
+The energy consumption is then multiplied by the **carbon intensity** of the datacenter's electricity:
+
+- **France (nuclear mix)**: 50 gCO2/kWh
+- **Low-carbon share**: 92% (nuclear + hydro + wind + solar)
+
+<Info>
+  TTS cache hits produce zero emissions. When a TTS response is served from cache, no GPU compute is needed. The dashboard only counts `uncachedChars`.
+</Info>
+
+## Charts
+
+### CO2 Emissions Over Time
+
+A stacked area chart showing daily emissions broken down by component (LLM, TTS, STT). Hover to see exact values.
+
+### Breakdown by Component
+
+A donut chart showing the percentage split between LLM, TTS, and STT emissions.
+
+### CO2 by Agent
+
+A horizontal bar chart ranking agents by total emissions. Useful for identifying which agents consume the most resources.
+
+## CSRD Compliance
+
+The Sustainability dashboard supports **CSRD** (Corporate Sustainability Reporting Directive) reporting requirements:
+
+| ESRS Standard | What we provide |
+|---------------|-----------------|
+| **E1-5** (Energy consumption) | Total kWh, kWh per conversation, renewable share |
+| **E1-6** (GHG emissions) | Total CO2, CO2 per conversation, breakdown by source |
+
+<Tip>
+  These metrics are calculated using uniform coefficients across all providers. Per-model/provider coefficients will be available in future updates for more precise reporting.
+</Tip>

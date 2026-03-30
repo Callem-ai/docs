@@ -1,0 +1,72 @@
+---
+title: "Integrations"
+description: "Connect your CRM, ticketing, and business tools to your voice agents."
+---
+
+# Integrations
+
+The Integrations module lets you connect external business tools (CRM, ticketing systems, etc.) to your agents. Once connected, available actions are automatically generated as tools that your agents can use during calls.
+
+## How It Works
+
+Callem uses [Unified.to](https://unified.to) as the integration layer. This provides:
+
+- **200+ integrations** across CRM, ticketing, and more
+- **OAuth authentication** — users connect their accounts via standard OAuth flows
+- **Zero data storage** — credentials are managed by Unified.to (SOC 2, GDPR compliant)
+- **Unified API** — all providers use the same normalized endpoints
+
+## Connecting an Integration
+
+1. Navigate to **Build > Integrations**
+2. Click **Connect**
+3. Browse the catalog — filter by category (CRM, Ticketing) or search by name
+4. Click on a provider (e.g. Salesforce, HubSpot, Zendesk)
+5. Complete the OAuth authentication flow
+6. The integration appears as "Connected" on your page
+
+## Available Providers
+
+### CRM
+
+| Provider | Actions |
+|----------|---------|
+| Salesforce | Create/update contacts, create leads, create deals, add notes |
+| HubSpot | Create/update contacts, create leads, create deals, add notes |
+| Pipedrive | Create contacts, create deals |
+| Zoho CRM | Create contacts, create leads |
+| Microsoft Dynamics 365 | Create contacts, create leads |
+| Attio, Close, Copper, Freshsales, ActiveCampaign | Various CRM actions |
+
+### Ticketing
+
+| Provider | Actions |
+|----------|---------|
+| Zendesk | Create/update tickets, add comments |
+| Freshdesk | Create/update tickets |
+| Intercom | Create tickets, get conversation details |
+
+## Enabling Actions
+
+Once connected, click **Manage Actions** to see all available actions for that provider. Toggle actions on/off:
+
+- **Enabling** an action automatically creates an HTTP tool in **Build > Tools** pre-configured with the correct endpoint, authentication, and input parameters
+- **Disabling** an action removes the generated tool
+
+<Info>
+  Generated tools appear alongside your custom tools in Build > Tools. You can assign them to agents just like any other tool.
+</Info>
+
+## Disconnecting
+
+Click the **Unplug** icon on a connected integration to disconnect. This removes the connection and all auto-generated tools.
+
+<Warning>
+  Disconnecting an integration removes all generated tools. Agents using those tools will no longer be able to call them.
+</Warning>
+
+## Security
+
+- OAuth credentials are managed by Unified.to — Callem never stores your CRM/ticketing passwords
+- API calls are proxied through Unified.to's zero-storage infrastructure
+- Unified.to is SOC 2 Type II, GDPR, HIPAA, and CCPA compliant

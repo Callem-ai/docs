@@ -1,0 +1,79 @@
+---
+title: "Supervisor Mode"
+description: "Real-time human oversight for your AI voice agents."
+---
+
+# Supervisor Mode
+
+<Info>
+  Supervisor Mode is currently in development. Request early access from the Supervisor page in Callem Studio.
+</Info>
+
+## Overview
+
+Supervisor Mode brings real-time human oversight to AI voice agents. Like Waymo keeps remote operators ready to assist autonomous vehicles, Supervisor Mode keeps your team ready to intervene on any live call.
+
+## Planned Features
+
+### Live Listening
+
+Monitor any active call in real time. See the full transcript streaming live with criticality scoring.
+
+### Whisper Mode
+
+Send instructions to the AI agent during a live call. The caller never hears the whisper. The agent adapts its next response based on the supervisor's guidance.
+
+**Example**: A supervisor sees the agent struggling with a retention call and whispers: "Propose a 3-month discount to retain the customer."
+
+### Takeover
+
+Take direct control of the call. The AI pauses, the supervisor speaks directly to the caller, and can hand back to the AI when ready.
+
+### AI Criticality Scoring
+
+A supervisor LLM continuously scores each active call on a 0-100 scale:
+
+| Score | Level | Action |
+|-------|-------|--------|
+| 0-40 | Stable | Logged only |
+| 40-70 | Warning | Notification in dashboard |
+| 70-100 | Critical | Push alert to supervisor |
+
+### Instant Transfer
+
+Route the call to a human agent queue with one click. Full context and transcript are passed to the receiving agent.
+
+### Intervention Analytics
+
+Every whisper, takeover, and transfer is logged and becomes a training signal. Your agents improve from every human intervention, creating a continuous improvement flywheel.
+
+## Architecture
+
+```
+Call in progress
+  |
+  v
+Voice Agent + Supervisor LLM (parallel monitoring)
+  |
+  v
+Criticality Score (0-100)
+  |
+  +--> Green (0-40): Log only
+  +--> Orange (40-70): Dashboard alert
+  +--> Red (70+): Push notification
+         |
+         v
+    Supervisor decides:
+      - Listen (passive)
+      - Whisper (instruct AI)
+      - Takeover (speak directly)
+      - Transfer (route to human)
+      - End call (emergency)
+```
+
+## Why Supervisor Mode Matters
+
+- **Enterprise trust**: CTOs need assurance that AI agents have human oversight before deploying at scale
+- **Regulatory compliance**: The EU AI Act will require human oversight for high-risk AI systems in direct interaction with users
+- **Continuous improvement**: Interventions become training data, creating a flywheel where the AI improves from every human correction
+- **Same level of control as traditional call centers**: Supervisors in call centers have always been able to listen, whisper, and take over. Supervisor Mode brings the same capabilities to AI agents.

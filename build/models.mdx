@@ -1,0 +1,101 @@
+---
+title: "Models"
+description: "Manage LLM, TTS, and STT models for your voice agents."
+---
+
+# Models
+
+The Models page centralizes all AI models used by your agents across three tabs: **LLM** (language models), **TTS** (text-to-speech voices), and **STT** (speech-to-text providers).
+
+## LLM Tab
+
+### Built-in Models
+
+Callem provides pre-configured LLM providers (e.g. Azure OpenAI, Callem Core) with multiple model options. These are available to all agents by default.
+
+### Custom Models (Bring Your Own Model)
+
+Connect any OpenAI-compatible LLM endpoint to use your own models. This works with OpenAI, Mistral, Groq, Together AI, vLLM, LiteLLM, and any provider exposing the `/chat/completions` API.
+
+#### Adding a Custom Model
+
+1. Navigate to **Build > Models > LLM**
+2. Click **Add Custom Model**
+3. Fill in the form:
+
+| Field | Description |
+|-------|-------------|
+| **Display Name** | How the model appears in dropdowns (e.g. "My Llama 3.1 70B") |
+| **Base URL** | The API endpoint without `/chat/completions` (e.g. `https://api.together.xyz/v1`) |
+| **API Key** | Your provider's API key — stored encrypted server-side |
+| **Model ID** | The model identifier (e.g. `meta-llama/Llama-3.1-70B-Instruct`) |
+
+4. Click **Test Connection** to verify the endpoint responds
+5. Click **Add Model**
+
+Once added, the custom model appears in the LLM provider dropdown when configuring agents.
+
+<Info>
+  The Test Connection sends a minimal request (`max_tokens: 5`) to verify the URL, API key, and model ID are correct. Cost is negligible.
+</Info>
+
+#### Managing Custom Models
+
+Use the action menu (three dots) on each custom model to:
+
+- **Test Connection** — verify the endpoint is still reachable
+- **Edit** — update name, URL, or API key
+- **Duplicate** — create a copy with "(copy)" suffix
+- **Delete** — remove the model (agents using it will need reconfiguration)
+
+## TTS Tab — Voice Library
+
+### Built-in Voices
+
+Browse all available TTS voices across providers (ElevenLabs, Azure, etc.). For each voice:
+
+- **Preview** — click the play button to hear a sample
+- **Filter** — by provider, gender (male/female), or search by name
+
+### Voice Cloning
+
+Create custom voices from audio samples.
+
+#### Cloning a Voice
+
+1. Click **Clone Voice**
+2. Fill in the form:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| **Reference Audio** | Yes | WAV or MP3 file, 5-20 seconds, clean audio |
+| **Transcription** | Yes | Exact text spoken in the audio sample |
+| **Voice Name** | Yes | Display name (e.g. "Sophie - Commerciale") |
+| **Language** | Yes | Default language for the voice |
+| **Gender** | Yes | Male or Female |
+| **Description** | No | Internal notes (e.g. "warm tone, for solar campaign") |
+| **Tags** | No | Comma-separated labels for filtering |
+
+3. Click **Upload & Clone**
+
+Cloned voices appear in the "My Voices" section and are also available in the agent Voice Browser when selecting a TTS voice.
+
+<Warning>
+  Audio quality matters. Use a clean recording with minimal background noise, recorded at a consistent volume. Mono audio at 24kHz is ideal.
+</Warning>
+
+### My Voices Filter
+
+When you have cloned voices, a **My Voices** filter appears in both the Models page and the agent Voice Browser, letting you quickly find your custom voices.
+
+## STT Tab — Speech-to-Text
+
+Browse available STT providers and their supported languages. Each provider card shows:
+
+- Provider name
+- Number of supported languages
+- Expandable language list with flag, label, and code
+
+<Tip>
+  Custom STT endpoints (Bring Your Own STT) are coming soon.
+</Tip>
