@@ -30,7 +30,7 @@ Each agent has the following configuration tabs:
 | Tab | Purpose |
 |-----|---------|
 | **Model** | System prompt, LLM provider/model, temperature, knowledge bases, tools |
-| **Voice** | TTS voice selection, STT configuration, VAD, interruptions, background sound |
+| **Voice** | TTS voice selection, STT configuration, interruptions, turn context, background sound |
 | **Call Analysis** | Post-call analysis fields and prompt |
 | **Advanced** | Safety features, privacy, voicemail detection, observability |
 
@@ -114,44 +114,29 @@ Configure how caller speech is transcribed:
 | **Provider** | The STT engine used for transcription |
 | **Language** | Primary language for transcription accuracy |
 
-### Voice Activity Detection (Semantic VAD)
+### End-of-turn detection
 
-Semantic VAD uses the LLM to determine when the caller has finished speaking, rather than relying solely on silence detection. This produces more natural conversations, especially when callers pause mid-sentence.
+The Voice Gateway detects automatically when the caller has finished speaking. There is no manual tuning: silence thresholds and voice activity detection are handled by the gateway's turn-taking engine.
+
+<Note>
+  Earlier versions exposed **Silence Confirmation Delay** and **Semantic VAD** controls. These settings are now managed by the Voice Gateway and no longer appear in the Studio UI. Existing agents keep their stored values for backward compatibility.
+</Note>
+
+### Turn context
+
+Free-text context that helps the gateway decide when the caller has finished their turn. Use it to describe expected answers, pauses, spelling, or number sequences.
+
+For example, if callers spell out a reference number character by character, mention it here so the agent waits for the full reference instead of responding after the first pause.
+
+Open it from the **Turn context** card in the Voice tab.
+
+### Allow interruptions
+
+Controls whether the caller can interrupt the agent while it's speaking.
 
 | Setting | Description | Default |
 |---------|-------------|---------|
-| **Enabled** | Toggle semantic VAD on/off | Off |
-| **Config** | Additional VAD configuration parameters | — |
-
-<Tip>
-  Enable Semantic VAD for complex conversations where callers may pause to think. Disable it for simple, fast-paced interactions (e.g. appointment confirmations) where silence-based detection is sufficient.
-</Tip>
-
-### Silence Confirmation Delay (End of Speech Threshold)
-
-The silence duration (in seconds) before the system considers the caller has finished speaking. Lower values make the agent more responsive but may cut the caller off. Higher values are more patient but introduce latency.
-
-| Setting | Value |
-|---------|-------|
-| **Minimum** | `0.5s` |
-| **Maximum** | `5s` |
-| **Default** | `1.5s` |
-
-| Range | Behavior |
-|-------|----------|
-| **0.5–1.0s** | Very responsive, risks interrupting pauses |
-| **1.0–2.0s** | Good balance for most use cases |
-| **2.0–5.0s** | Very patient, best for elderly callers or complex topics |
-
-### Interruption Config
-
-Controls whether and how the caller can interrupt the agent while it's speaking.
-
-| Setting | Description | Min | Max | Default |
-|---------|-------------|-----|-----|---------|
-| **Enabled** | Allow caller to interrupt the agent | — | — | Off |
-| **Minimum words** | Minimum words the caller must say before the interruption is registered | `1` | `10` | `3` |
-| **Minimum duration** | Minimum duration (in seconds) of caller speech before interruption triggers | `1` | `60` | `15` |
+| **Allow interruptions** | Let the caller interrupt the agent while it is speaking | Off |
 
 ### Inactivity Timeout (Reminder Message)
 
